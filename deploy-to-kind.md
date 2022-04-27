@@ -35,6 +35,16 @@ argocd account update-password
 argocd app list
 ```
 
+This will store the credentials in
+
+```
+# Mac
+cat ~/.config/argocd/config
+
+# Linux
+cat ~/.argocd/config
+```
+
 - Open UI
 
 ```
