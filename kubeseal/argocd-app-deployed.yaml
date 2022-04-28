@@ -5,10 +5,10 @@ metadata:
     kubectl.kubernetes.io/last-applied-configuration: |
       {"apiVersion":"argoproj.io/v1alpha1","kind":"Application","metadata":{"annotations":{},"name":"sealed-secrets","namespace":"argocd"},"spec":{"destination":{"namespace":"kubeseal","server":"https://kubernetes.default.svc"},"project":"default","source":{"chart":"sealed-secrets","helm":{"releaseName":"sealed-secrets"},"repoURL":"https://bitnami-labs.github.io/sealed-secrets","targetRevision":"2.1.6"}}}
   creationTimestamp: "2022-04-28T04:39:29Z"
-  generation: 26
+  generation: 42
   name: sealed-secrets
   namespace: argocd
-  resourceVersion: "32112"
+  resourceVersion: "34819"
   uid: 568d3f18-5506-4a04-9209-a588b56c8ad2
 spec:
   destination:
@@ -18,6 +18,9 @@ spec:
   source:
     chart: sealed-secrets
     helm:
+      parameters:
+      - name: service.type
+        value: NodePort
       releaseName: sealed-secrets
     repoURL: https://bitnami-labs.github.io/sealed-secrets
     targetRevision: 2.1.6
@@ -35,8 +38,21 @@ status:
         releaseName: sealed-secrets
       repoURL: https://bitnami-labs.github.io/sealed-secrets
       targetRevision: 2.1.6
+  - deployStartedAt: "2022-04-28T05:37:12Z"
+    deployedAt: "2022-04-28T05:37:12Z"
+    id: 1
+    revision: 2.1.6
+    source:
+      chart: sealed-secrets
+      helm:
+        parameters:
+        - name: service.type
+          value: NodePort
+        releaseName: sealed-secrets
+      repoURL: https://bitnami-labs.github.io/sealed-secrets
+      targetRevision: 2.1.6
   operationState:
-    finishedAt: "2022-04-28T04:43:16Z"
+    finishedAt: "2022-04-28T05:37:12Z"
     message: successfully synced (all tasks run)
     operation:
       initiatedBy:
@@ -47,13 +63,13 @@ status:
         syncStrategy:
           hook: {}
     phase: Succeeded
-    startedAt: "2022-04-28T04:43:16Z"
+    startedAt: "2022-04-28T05:37:12Z"
     syncResult:
       resources:
       - group: ""
         hookPhase: Running
         kind: ServiceAccount
-        message: serviceaccount/sealed-secrets created
+        message: serviceaccount/sealed-secrets unchanged
         name: sealed-secrets
         namespace: kubeseal
         status: Synced
@@ -72,12 +88,8 @@ status:
       - group: rbac.authorization.k8s.io
         hookPhase: Running
         kind: ClusterRole
-        message: 'clusterrole.rbac.authorization.k8s.io/secrets-unsealer reconciled.
-          clusterrole.rbac.authorization.k8s.io/secrets-unsealer configured. Warning:
-          resource clusterroles/secrets-unsealer is missing the kubectl.kubernetes.io/last-applied-configuration
-          annotation which is required by  apply.  apply should only be used on resources
-          created declaratively by either  create --save-config or  apply. The missing
-          annotation will be patched automatically.'
+        message: clusterrole.rbac.authorization.k8s.io/secrets-unsealer reconciled.
+          clusterrole.rbac.authorization.k8s.io/secrets-unsealer unchanged
         name: secrets-unsealer
         namespace: kubeseal
         status: Synced
@@ -86,14 +98,8 @@ status:
       - group: rbac.authorization.k8s.io
         hookPhase: Running
         kind: ClusterRoleBinding
-        message: "clusterrolebinding.rbac.authorization.k8s.io/sealed-secrets reconciled.
-          reconciliation required create\n\tmissing subjects added:\n\t\t{Kind:ServiceAccount
-          APIGroup: Name:sealed-secrets Namespace:kubeseal}. clusterrolebinding.rbac.authorization.k8s.io/sealed-secrets
-          configured. Warning: resource clusterrolebindings/sealed-secrets is missing
-          the kubectl.kubernetes.io/last-applied-configuration annotation which is
-          required by  apply.  apply should only be used on resources created declaratively
-          by either  create --save-config or  apply. The missing annotation will be
-          patched automatically."
+        message: clusterrolebinding.rbac.authorization.k8s.io/sealed-secrets reconciled.
+          clusterrolebinding.rbac.authorization.k8s.io/sealed-secrets configured
         name: sealed-secrets
         namespace: kubeseal
         status: Synced
@@ -102,16 +108,8 @@ status:
       - group: rbac.authorization.k8s.io
         hookPhase: Running
         kind: Role
-        message: "role.rbac.authorization.k8s.io/sealed-secrets-service-proxier reconciled.
-          reconciliation required create\n\tmissing rules added:\n\t\t{Verbs:[get]
-          APIGroups:[] Resources:[services] ResourceNames:[] NonResourceURLs:[]}\n\t\t{Verbs:[create
-          get] APIGroups:[] Resources:[services/proxy] ResourceNames:[http:sealed-secrets:
-          http:sealed-secrets:http sealed-secrets] NonResourceURLs:[]}. role.rbac.authorization.k8s.io/sealed-secrets-service-proxier
-          configured. Warning: resource roles/sealed-secrets-service-proxier is missing
-          the kubectl.kubernetes.io/last-applied-configuration annotation which is
-          required by  apply.  apply should only be used on resources created declaratively
-          by either  create --save-config or  apply. The missing annotation will be
-          patched automatically."
+        message: role.rbac.authorization.k8s.io/sealed-secrets-service-proxier reconciled.
+          role.rbac.authorization.k8s.io/sealed-secrets-service-proxier unchanged
         name: sealed-secrets-service-proxier
         namespace: kubeseal
         status: Synced
@@ -120,15 +118,8 @@ status:
       - group: rbac.authorization.k8s.io
         hookPhase: Running
         kind: Role
-        message: "role.rbac.authorization.k8s.io/sealed-secrets-key-admin reconciled.
-          reconciliation required create\n\tmissing rules added:\n\t\t{Verbs:[get]
-          APIGroups:[] Resources:[secrets] ResourceNames:[sealed-secrets-key] NonResourceURLs:[]}\n\t\t{Verbs:[create
-          list] APIGroups:[] Resources:[secrets] ResourceNames:[] NonResourceURLs:[]}.
-          role.rbac.authorization.k8s.io/sealed-secrets-key-admin configured. Warning:
-          resource roles/sealed-secrets-key-admin is missing the kubectl.kubernetes.io/last-applied-configuration
-          annotation which is required by  apply.  apply should only be used on resources
-          created declaratively by either  create --save-config or  apply. The missing
-          annotation will be patched automatically."
+        message: role.rbac.authorization.k8s.io/sealed-secrets-key-admin reconciled.
+          role.rbac.authorization.k8s.io/sealed-secrets-key-admin unchanged
         name: sealed-secrets-key-admin
         namespace: kubeseal
         status: Synced
@@ -137,32 +128,20 @@ status:
       - group: rbac.authorization.k8s.io
         hookPhase: Running
         kind: RoleBinding
-        message: "rolebinding.rbac.authorization.k8s.io/sealed-secrets-key-admin reconciled.
-          reconciliation required create\n\tmissing subjects added:\n\t\t{Kind:ServiceAccount
-          APIGroup: Name:sealed-secrets Namespace:kubeseal}. rolebinding.rbac.authorization.k8s.io/sealed-secrets-key-admin
-          configured. Warning: resource rolebindings/sealed-secrets-key-admin is missing
-          the kubectl.kubernetes.io/last-applied-configuration annotation which is
-          required by  apply.  apply should only be used on resources created declaratively
-          by either  create --save-config or  apply. The missing annotation will be
-          patched automatically."
-        name: sealed-secrets-key-admin
-        namespace: kubeseal
-        status: Synced
-        syncPhase: Sync
-        version: v1
-      - group: rbac.authorization.k8s.io
-        hookPhase: Running
-        kind: RoleBinding
-        message: "rolebinding.rbac.authorization.k8s.io/sealed-secrets-service-proxier
-          reconciled. reconciliation required create\n\tmissing subjects added:\n\t\t{Kind:Group
-          APIGroup:rbac.authorization.k8s.io Name:system:authenticated Namespace:}.
-          rolebinding.rbac.authorization.k8s.io/sealed-secrets-service-proxier configured.
-          Warning: resource rolebindings/sealed-secrets-service-proxier is missing
-          the kubectl.kubernetes.io/last-applied-configuration annotation which is
-          required by  apply.  apply should only be used on resources created declaratively
-          by either  create --save-config or  apply. The missing annotation will be
-          patched automatically."
+        message: rolebinding.rbac.authorization.k8s.io/sealed-secrets-service-proxier
+          reconciled. rolebinding.rbac.authorization.k8s.io/sealed-secrets-service-proxier
+          unchanged
         name: sealed-secrets-service-proxier
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: RoleBinding
+        message: rolebinding.rbac.authorization.k8s.io/sealed-secrets-key-admin reconciled.
+          rolebinding.rbac.authorization.k8s.io/sealed-secrets-key-admin configured
+        name: sealed-secrets-key-admin
         namespace: kubeseal
         status: Synced
         syncPhase: Sync
@@ -170,7 +149,7 @@ status:
       - group: ""
         hookPhase: Running
         kind: Service
-        message: service/sealed-secrets created
+        message: service/sealed-secrets configured
         name: sealed-secrets
         namespace: kubeseal
         status: Synced
@@ -179,7 +158,7 @@ status:
       - group: apps
         hookPhase: Running
         kind: Deployment
-        message: deployment.apps/sealed-secrets created
+        message: deployment.apps/sealed-secrets configured
         name: sealed-secrets
         namespace: kubeseal
         status: Synced
@@ -189,10 +168,13 @@ status:
       source:
         chart: sealed-secrets
         helm:
+          parameters:
+          - name: service.type
+            value: NodePort
           releaseName: sealed-secrets
         repoURL: https://bitnami-labs.github.io/sealed-secrets
         targetRevision: 2.1.6
-  reconciledAt: "2022-04-28T05:10:47Z"
+  reconciledAt: "2022-04-28T05:37:12Z"
   resources:
   - health:
       status: Healthy
@@ -265,6 +247,9 @@ status:
       source:
         chart: sealed-secrets
         helm:
+          parameters:
+          - name: service.type
+            value: NodePort
           releaseName: sealed-secrets
         repoURL: https://bitnami-labs.github.io/sealed-secrets
         targetRevision: 2.1.6

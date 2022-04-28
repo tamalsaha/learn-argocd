@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubedb
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: kubedb
+    repoURL: https://charts.appscode.com/stable
+    targetRevision: v2022.03.28
+    helm:
+      releaseName: kubedb
+      parameters:
+      - name: kubedb-provisioner.enabled
+        value: 'true'
+      - name: kubedb-ops-manager.enabled
+        value: 'true'
+      - name: kubedb-autoscaler.enabled
+        value: 'true'
+      - name: kubedb-dashboard.enabled
+        value: 'true'
+      - name: kubedb-schema-manager.enabled
+        value: 'true'
+      - name: global.license
+        value: |
+          -----BEGIN CERTIFICATE-----
+          MIIEUDCCAzigAwIBAgIIGRMZAFRHk9EwDQYJKoZIhvcNAQELBQAwJTEWMBQGA1UE
+          ChMNQXBwc0NvZGUgSW5jLjELMAkGA1UEAxMCY2EwHhcNMjIwNDI4MDUzOTQ5WhcN
+          MjIwNTI4MDUzOTQ5WjCCARgxDzANBgNVBAYTBmt1YmVkYjETMBEGA1UECBMKZW50
+          ZXJwcmlzZTGBpDAXBgNVBAoTEGt1YmVkYi1jb21tdW5pdHkwFwYDVQQKExBrdWJl
+          ZGItZXh0LXN0YXNoMBgGA1UEChMRa3ViZWRiLWF1dG9zY2FsZXIwGAYDVQQKExFr
+          dWJlZGItZW50ZXJwcmlzZTAcBgNVBAoTFXBhbm9wdGljb24tZW50ZXJwcmlzZTAe
+          BgNVBAoTF2t1YmVkYi1tb25pdG9yaW5nLWFnZW50MRowGAYDVQQLExFrdWJlZGIt
+          ZW50ZXJwcmlzZTEtMCsGA1UEAxMkZjg5ZGZhY2YtM2VjNS00ZWYwLWIxNDAtZGJk
+          YzlhYjBiN2I3MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs4zBlQwg
+          zMSte5IZqHXtenITr2mDNuRUmBx2dXqqvo4q+MoNRz785TureHFytkxy+WvSiED6
+          GWcMFJoqm2VguaD8TBT9JaF3qbkegLcBVGHUc9ckgJJ5KmgRntS3yGE2gQMhF6d9
+          Xr6UrmLXPxjQpJHA9AzLM+qnOvejgH3itk7wHpkTks7vyv3MaJ7cDie3Fd431YIF
+          7scIqJZektplcM5o8nPmTD6sTckMZKcgG3dX88hPDVvV1+ulqVACdVhHA7nFkJFD
+          pnzbGfl+5ZuMc3wM0NqBHpXNYQTWSM4cSJa4GMTZabKFV+cMF9VrWJIVRyTN5Tub
+          Q6q0gLNyUp8FnQIDAQABo4GOMIGLMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAK
+          BggrBgEFBQcDAjBkBgNVHREEXTBbgiRmODlkZmFjZi0zZWM1LTRlZjAtYjE0MC1k
+          YmRjOWFiMGI3YjeBH1RhbWFsIFNhaGEgPHRhbWFsQGFwcHNjb2RlLmNvbT6BEnRh
+          bWFsQGFwcHNjb2RlLmNvbTANBgkqhkiG9w0BAQsFAAOCAQEAZP/5N4XQlNuLWhR5
+          FmwPol+uZ9X3P70NUNHJAhFIAVfbKg2CSe4C0dbJU87ohRVUojeZaAJx3JLyJHUE
+          l/xDXnSKYCbqOkVIeISX5OXGeTVXIsHMp3ufjyN5Ji116q+DbVpk8Onl2UlaqlSK
+          AzT25lyVGOPo5qSNbtn1lKkat52AE18u1nL1taNMmrCmkyRXplGZmdvuco/2eE3Y
+          NpnaH9XS7ib6Mou4y6oCA1LDsxZg/OsvzyK5jPUa3l9cxm2qKsSX8DThEK5UCoui
+          bMFKTcJYMZUlHReI8r/ZzBnwotLLL8ChZ7N7mx4EoHaijw1JRuvwG1GyZcMvM3Hn
+          0LZQfA==
+          -----END CERTIFICATE-----
+      - name: service.type
+        value: NodePort
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: kubedb
