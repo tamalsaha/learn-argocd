@@ -1,16 +1,250 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"argoproj.io/v1alpha1","kind":"Application","metadata":{"annotations":{},"name":"sealed-secrets","namespace":"argocd"},"spec":{"destination":{"namespace":"kubeseal","server":"https://kubernetes.default.svc"},"project":"default","source":{"chart":"sealed-secrets","helm":{"releaseName":"sealed-secrets"},"repoURL":"https://bitnami-labs.github.io/sealed-secrets","targetRevision":"1.16.1"}}}
+  creationTimestamp: "2022-04-28T02:39:10Z"
+  generation: 31
   name: sealed-secrets
   namespace: argocd
+  resourceVersion: "17467"
+  uid: 5c4c3783-e71e-4a85-bfa7-c09d3eab5ab2
 spec:
+  destination:
+    namespace: kubeseal
+    server: https://kubernetes.default.svc
   project: default
   source:
     chart: sealed-secrets
-    repoURL: https://bitnami-labs.github.io/sealed-secrets
-    targetRevision: 1.16.1
     helm:
       releaseName: sealed-secrets
-  destination:
-    server: "https://kubernetes.default.svc"
+    repoURL: https://bitnami-labs.github.io/sealed-secrets
+    targetRevision: 1.16.1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+status:
+  health:
+    status: Progressing
+  history:
+  - deployStartedAt: "2022-04-28T02:40:11Z"
+    deployedAt: "2022-04-28T02:40:11Z"
+    id: 0
+    revision: 1.16.1
+    source:
+      chart: sealed-secrets
+      helm:
+        releaseName: sealed-secrets
+      repoURL: https://bitnami-labs.github.io/sealed-secrets
+      targetRevision: 1.16.1
+  - deployStartedAt: "2022-04-28T02:41:16Z"
+    deployedAt: "2022-04-28T02:41:16Z"
+    id: 1
+    revision: 1.16.1
+    source:
+      chart: sealed-secrets
+      helm:
+        releaseName: sealed-secrets
+      repoURL: https://bitnami-labs.github.io/sealed-secrets
+      targetRevision: 1.16.1
+  operationState:
+    finishedAt: "2022-04-28T02:41:16Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        username: admin
+      retry: {}
+      sync:
+        revision: 1.16.1
+        syncStrategy:
+          hook: {}
+    phase: Succeeded
+    startedAt: "2022-04-28T02:41:16Z"
+    syncResult:
+      resources:
+      - group: ""
+        hookPhase: Running
+        kind: ServiceAccount
+        message: serviceaccount/sealed-secrets unchanged
+        name: sealed-secrets
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apiextensions.k8s.io
+        hookPhase: Running
+        kind: CustomResourceDefinition
+        message: customresourcedefinition.apiextensions.k8s.io/sealedsecrets.bitnami.com
+          unchanged
+        name: sealedsecrets.bitnami.com
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: ClusterRole
+        message: clusterrole.rbac.authorization.k8s.io/secrets-unsealer reconciled.
+          clusterrole.rbac.authorization.k8s.io/secrets-unsealer unchanged
+        name: secrets-unsealer
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: ClusterRoleBinding
+        message: clusterrolebinding.rbac.authorization.k8s.io/sealed-secrets reconciled.
+          clusterrolebinding.rbac.authorization.k8s.io/sealed-secrets configured
+        name: sealed-secrets
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: Role
+        message: role.rbac.authorization.k8s.io/sealed-secrets-service-proxier reconciled.
+          role.rbac.authorization.k8s.io/sealed-secrets-service-proxier unchanged
+        name: sealed-secrets-service-proxier
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: Role
+        message: role.rbac.authorization.k8s.io/sealed-secrets-key-admin reconciled.
+          role.rbac.authorization.k8s.io/sealed-secrets-key-admin unchanged
+        name: sealed-secrets-key-admin
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: RoleBinding
+        message: rolebinding.rbac.authorization.k8s.io/sealed-secrets-service-proxier
+          reconciled. rolebinding.rbac.authorization.k8s.io/sealed-secrets-service-proxier
+          unchanged
+        name: sealed-secrets-service-proxier
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: rbac.authorization.k8s.io
+        hookPhase: Running
+        kind: RoleBinding
+        message: rolebinding.rbac.authorization.k8s.io/sealed-secrets-key-admin reconciled.
+          rolebinding.rbac.authorization.k8s.io/sealed-secrets-key-admin configured
+        name: sealed-secrets-key-admin
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: Service
+        message: service/sealed-secrets unchanged
+        name: sealed-secrets
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        kind: Deployment
+        message: deployment.apps/sealed-secrets configured
+        name: sealed-secrets
+        namespace: kubeseal
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      revision: 1.16.1
+      source:
+        chart: sealed-secrets
+        helm:
+          releaseName: sealed-secrets
+        repoURL: https://bitnami-labs.github.io/sealed-secrets
+        targetRevision: 1.16.1
+  reconciledAt: "2022-04-28T02:41:44Z"
+  resources:
+  - health:
+      status: Healthy
+    kind: Service
+    name: sealed-secrets
     namespace: kubeseal
+    status: Synced
+    version: v1
+  - kind: ServiceAccount
+    name: sealed-secrets
+    namespace: kubeseal
+    status: Synced
+    version: v1
+  - group: apiextensions.k8s.io
+    kind: CustomResourceDefinition
+    name: sealedsecrets.bitnami.com
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      message: 'Waiting for rollout to finish: 0 of 1 updated replicas are available...'
+      status: Progressing
+    kind: Deployment
+    name: sealed-secrets
+    namespace: kubeseal
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: secrets-unsealer
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+    name: sealed-secrets
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: Role
+    name: sealed-secrets-key-admin
+    namespace: kubeseal
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: Role
+    name: sealed-secrets-service-proxier
+    namespace: kubeseal
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
+    name: sealed-secrets-key-admin
+    namespace: kubeseal
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
+    name: sealed-secrets-service-proxier
+    namespace: kubeseal
+    status: Synced
+    version: v1
+  sourceType: Helm
+  summary:
+    images:
+    - quay.io/bitnami/sealed-secrets-controller:v0.16.0
+  sync:
+    comparedTo:
+      destination:
+        namespace: kubeseal
+        server: https://kubernetes.default.svc
+      source:
+        chart: sealed-secrets
+        helm:
+          releaseName: sealed-secrets
+        repoURL: https://bitnami-labs.github.io/sealed-secrets
+        targetRevision: 1.16.1
+    revision: 1.16.1
+    status: Synced
