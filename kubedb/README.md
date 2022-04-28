@@ -3,6 +3,7 @@
 - Deploy KubeDB Helm chart. Update the Application CRD to include License key.
 
 ```
+> k create ns kubedb
 > k apply -f argocd-app.yaml
 > argocd app sync kubedb
 ```
