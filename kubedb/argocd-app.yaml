@@ -50,8 +50,6 @@ spec:
           bMFKTcJYMZUlHReI8r/ZzBnwotLLL8ChZ7N7mx4EoHaijw1JRuvwG1GyZcMvM3Hn
           0LZQfA==
           -----END CERTIFICATE-----
-      - name: service.type
-        value: NodePort
   destination:
     server: "https://kubernetes.default.svc"
     namespace: kubedb
