@@ -28,3 +28,10 @@ You can learn more on this from the official ArgoCD docs:
 
 - https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/#system-level-configuration
 - https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cm.yaml#L82-L91
+
+- After that the application should be in `Synced` status. You will see some warning but you can ignore those. KubeDB uses a parent/child chart structure and some YAMLs have been included in multiple child charts incase they were installed separately. ArgoCD gives an error for that.
+
+<img src="./kubedb-argocd.png">
+
+
+
