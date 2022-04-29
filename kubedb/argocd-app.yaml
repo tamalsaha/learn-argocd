@@ -4,6 +4,11 @@ metadata:
   name: kubedb
   namespace: argocd
 spec:
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/template/metadata/annotations/reload
   project: default
   source:
     chart: kubedb
