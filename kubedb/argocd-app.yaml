@@ -5,6 +5,11 @@ metadata:
   namespace: argocd
 spec:
   ignoreDifferences:
+  - jsonPointers:
+    - /data
+    kind: Secret
+    name: kubedb-kubedb-webhook-server-apiserver-cert
+    namespace: kubedb
   - group: apps
     kind: Deployment
     jsonPointers:
