@@ -16,6 +16,9 @@ k edit cm argocd-cm -n argocd
 
 ```
 data:
+  resource.customizations.ignoreDifferences.apiregistration.k8s.io_APIService: |
+    jsonPointers:
+    - /spec/caBundle
   resource.customizations.ignoreDifferences.admissionregistration.k8s.io_MutatingWebhookConfiguration: |
     jqPathExpressions:
     - '.webhooks[]?.clientConfig.caBundle'
