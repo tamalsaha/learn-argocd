@@ -51,6 +51,12 @@ cat ~/.argocd/config
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
 
+or using argocd cli
+
+```
+argocd admin dashboard -n argocd
+```
+
 - Create An Application From A Git Repository
 
 ```
