@@ -15,9 +15,15 @@ spec:
     server: "https://kubernetes.default.svc"
     namespace: kubeseal
   syncPolicy:
+    # https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
     automated:
       prune: true
       allowEmpty: true
       selfHeal: true
+    # https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/
     syncOptions:
       - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
