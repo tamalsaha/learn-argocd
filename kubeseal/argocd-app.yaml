@@ -14,3 +14,10 @@ spec:
   destination:
     server: "https://kubernetes.default.svc"
     namespace: kubeseal
+  syncPolicy:
+    automated:
+      prune: true
+      allowEmpty: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
