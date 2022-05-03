@@ -8,7 +8,10 @@
 
 ```
 kubectl create namespace argocd
-kubectl apply -n argocd -f https://github.com/argoproj/argo-cd/raw/v2.3.3/manifests/ha/install.yaml
+kubectl apply -n argocd -f https://github.com/argoproj/argo-cd/raw/stable/manifests/install.yaml
+watch kubectl get pods -n argocd
+
+# kubectl apply -n argocd -f https://github.com/argoproj/argo-cd/raw/stable/manifests/ha/install.yaml
 ```
 
 3. Install argocd cli
