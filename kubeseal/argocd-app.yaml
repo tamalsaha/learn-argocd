@@ -26,4 +26,5 @@ spec:
       - ApplyOutOfSyncOnly=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
-      - RespectIgnoreDifferences=true
+      - FailOnSharedResource=true
+      # - RespectIgnoreDifferences=true
