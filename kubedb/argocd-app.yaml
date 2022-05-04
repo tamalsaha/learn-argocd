@@ -76,3 +76,6 @@ spec:
       - Validate=false
       - ApplyOutOfSyncOnly=true
       - FailOnSharedResource=true
+
+# Known Bugs:
+# - https://github.com/argoproj/argo-cd/issues/9303
