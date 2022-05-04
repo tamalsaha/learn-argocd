@@ -6,27 +6,43 @@ metadata:
 spec:
   project: default
   source:
+    # path: charts/kubedb-catalog
+    # repoURL: https://github.com/kubedb/installer
+    # # targetRevision: release-v2021.11.24
+    # targetRevision: release-v2022.03.28
+
     chart: kubedb-catalog
     repoURL: https://charts.appscode.com/stable
     # targetRevision: v2021.11.24
     targetRevision: v2022.03.28
-    # helm:
-    #   releaseName: kubedb-catalog
   destination:
     server: "https://kubernetes.default.svc"
     namespace: kubedb
   syncPolicy:
-    # https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
     automated:
       prune: true
-      allowEmpty: true
       selfHeal: true
-    # https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/
+      # allowEmpty: true
     syncOptions:
+      - Validate=false
       - CreateNamespace=true
       - ApplyOutOfSyncOnly=true
-      - Replace=true
-      - PrunePropagationPolicy=foreground
-      - PruneLast=true
       - FailOnSharedResource=true
-      # - RespectIgnoreDifferences=true
+      # - PrunePropagationPolicy=foreground
+      # - PruneLast=true
+
+  # syncPolicy:
+  #   # https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
+  #   automated:
+  #     prune: true
+  #     allowEmpty: true
+  #     selfHeal: true
+  #   # https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/
+  #   syncOptions:
+  #     - CreateNamespace=true
+  #     - ApplyOutOfSyncOnly=true
+  #     # - Replace=true
+  #     # - PrunePropagationPolicy=foreground
+  #     # - PruneLast=true
+  #     # - FailOnSharedResource=true
+  #     # - RespectIgnoreDifferences=true
