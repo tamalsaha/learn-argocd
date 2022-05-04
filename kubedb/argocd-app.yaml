@@ -68,13 +68,11 @@ spec:
     # https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
     automated:
       prune: true
-      allowEmpty: true
       selfHeal: true
     # https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/
     syncOptions:
       - CreateNamespace=true
+      # needed to avoid Sync Fail when CRD updates
+      - Validate=false
       - ApplyOutOfSyncOnly=true
-      - PrunePropagationPolicy=foreground
-      - PruneLast=true
       - FailOnSharedResource=true
-      # - RespectIgnoreDifferences=true
