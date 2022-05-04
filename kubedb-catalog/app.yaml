@@ -19,30 +19,19 @@ spec:
     server: "https://kubernetes.default.svc"
     namespace: kubedb
   syncPolicy:
+    # https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
     automated:
       prune: true
       selfHeal: true
       # allowEmpty: true
+    # https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/
     syncOptions:
-      - Validate=false
       - CreateNamespace=true
+      # needed to avoid Sync Fail when CRD updates
+      - Validate=false
       - ApplyOutOfSyncOnly=true
       - FailOnSharedResource=true
+      # - Replace=true
       # - PrunePropagationPolicy=foreground
       # - PruneLast=true
-
-  # syncPolicy:
-  #   # https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/
-  #   automated:
-  #     prune: true
-  #     allowEmpty: true
-  #     selfHeal: true
-  #   # https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/
-  #   syncOptions:
-  #     - CreateNamespace=true
-  #     - ApplyOutOfSyncOnly=true
-  #     # - Replace=true
-  #     # - PrunePropagationPolicy=foreground
-  #     # - PruneLast=true
-  #     # - FailOnSharedResource=true
-  #     # - RespectIgnoreDifferences=true
+      # - RespectIgnoreDifferences=true
