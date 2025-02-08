@@ -15,3 +15,5 @@ function kustomizeIt {
     $DEMO_HOME/$1
 }
 ```
+
+`kustomizeIt base`
