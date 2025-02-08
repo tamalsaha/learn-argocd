@@ -1,0 +1,29 @@
+{{ $featureGates := .Values.featureGates }}
+{{- if .Values.global }}
+  {{ $featureGates = mergeOverwrite dict .Values.featureGates .Values.global.featureGates }}
+{{- end }}
+
+{{ if $featureGates.Elasticsearch }}
+{{ if or (not .Values.skipDeprecated) (has "6.4" .Values.enableVersions.Elasticsearch) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: ElasticsearchVersion
+metadata:
+  name: '6.4'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  authPlugin: SearchGuard
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/elasticsearch") $) }}:6.4'
+  distribution: SearchGuard
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/elasticsearch_exporter") $) }}:1.0.2'
+  initContainer:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/busybox") $) }}'
+    yqImage: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/yq") $) }}:2.4.0'
+  podSecurityPolicies:
+    databasePolicyName: elasticsearch-db
+  version: "6.4"
+  deprecated: {{ not (has "6.4" .Values.enableVersions.Elasticsearch) }}
+{{ end }}
+{{ end }}

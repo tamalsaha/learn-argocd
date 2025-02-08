@@ -1,0 +1,12 @@
+{{- if and .Values.platform.token (empty .Values.hubKubeconfigSecretName) }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "platform.tokenSecretName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "license-proxyserver.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  token: {{ .Values.platform.token | quote }}
+{{- end }}

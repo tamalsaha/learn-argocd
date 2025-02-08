@@ -1,0 +1,39 @@
+helmCharts:
+- name: license-proxyserver
+  includeCRDs: true
+  valuesInline:
+    platform:
+      baseURL: https://appscode.com
+      token: secrer-token
+  releaseName: license-proxyserver
+  version: v2025.1.17
+  repo: oci://ghcr.io/appscode-charts
+
+- name: ace-user-roles
+  includeCRDs: true
+  valuesInline:
+    enableClusterRoles:
+      ace: false
+      appcatalog: true
+      catalog: false
+      cert-manager: false
+      kubedb: true
+      kubedb-ui: false
+      kubestash: false
+      kubevault: false
+      license-proxyserver: true
+      metrics: true
+      prometheus: false
+      stash: false
+  releaseName: ace-user-roles
+  version: v2024.9.30
+  repo: oci://ghcr.io/appscode-charts
+
+- name: kubedb
+  includeCRDs: true
+  valuesInline:
+    ace-user-roles:
+      enabled: false
+  releaseName: kubedb
+  version: v2025.2.6-rc.0
+  repo: oci://ghcr.io/appscode-charts
