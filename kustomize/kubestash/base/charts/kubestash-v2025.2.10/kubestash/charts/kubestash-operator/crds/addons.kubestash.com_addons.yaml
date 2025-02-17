@@ -1,6 +1,8 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    kustomize.config.k8s.io/behavior: merge
   labels:
     app.kubernetes.io/name: kubestash
   name: addons.addons.kubestash.com
