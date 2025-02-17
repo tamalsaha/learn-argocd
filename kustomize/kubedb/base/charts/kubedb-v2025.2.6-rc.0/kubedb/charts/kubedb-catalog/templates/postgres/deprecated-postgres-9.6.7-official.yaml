@@ -1,0 +1,149 @@
+{{ $featureGates := .Values.featureGates }}
+{{- if .Values.global }}
+  {{ $featureGates = mergeOverwrite dict .Values.featureGates .Values.global.featureGates }}
+{{- end }}
+
+{{ if $featureGates.Postgres }}
+{{ if or (not .Values.skipDeprecated) (has "9.6.7" .Values.enableVersions.Postgres) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PostgresVersion
+metadata:
+  name: '9.6.7'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres") $) }}:9.6.7'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/operator") $) }}:0.8.0'
+  podSecurityPolicies:
+    databasePolicyName: postgres-db
+  version: 9.6.7
+  deprecated: {{ not (has "9.6.7" .Values.enableVersions.Postgres) }}
+{{ end }}
+
+---
+{{ if or (not .Values.skipDeprecated) (has "9.6.7-v1" .Values.enableVersions.Postgres) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PostgresVersion
+metadata:
+  name: '9.6.7-v1'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres") $) }}:9.6.7-v2'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres_exporter") $) }}:v0.4.6'
+  podSecurityPolicies:
+    databasePolicyName: postgres-db
+  version: 9.6.7
+  deprecated: {{ not (has "9.6.7-v1" .Values.enableVersions.Postgres) }}
+{{ end }}
+
+---
+{{ if or (not .Values.skipDeprecated) (has "9.6.7-v2" .Values.enableVersions.Postgres) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PostgresVersion
+metadata:
+  name: '9.6.7-v2'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres") $) }}:9.6.7-v3'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres_exporter") $) }}:v0.4.7'
+  podSecurityPolicies:
+    databasePolicyName: postgres-db
+  stash:
+    addon:
+      backupTask:
+        name: postgres-backup-9.6.19-v4
+      restoreTask:
+        name: postgres-restore-9.6.19-v4
+  version: 9.6.7
+  deprecated: {{ not (has "9.6.7-v2" .Values.enableVersions.Postgres) }}
+{{ end }}
+
+---
+{{ if or (not .Values.skipDeprecated) (has "9.6.7-v3" .Values.enableVersions.Postgres) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PostgresVersion
+metadata:
+  name: '9.6.7-v3'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres") $) }}:9.6.7-v4'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres_exporter") $) }}:v0.4.7'
+  podSecurityPolicies:
+    databasePolicyName: postgres-db
+  stash:
+    addon:
+      backupTask:
+        name: postgres-backup-9.6.19-v4
+      restoreTask:
+        name: postgres-restore-9.6.19-v4
+  version: 9.6.7
+  deprecated: {{ not (has "9.6.7-v3" .Values.enableVersions.Postgres) }}
+{{ end }}
+
+---
+{{ if or (not .Values.skipDeprecated) (has "9.6.7-v4" .Values.enableVersions.Postgres) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PostgresVersion
+metadata:
+  name: '9.6.7-v4'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres") $) }}:9.6.7-v5'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres_exporter") $) }}:v0.4.7'
+  podSecurityPolicies:
+    databasePolicyName: postgres-db
+  stash:
+    addon:
+      backupTask:
+        name: postgres-backup-9.6.19-v4
+      restoreTask:
+        name: postgres-restore-9.6.19-v4
+  version: 9.6.7
+  deprecated: {{ not (has "9.6.7-v4" .Values.enableVersions.Postgres) }}
+{{ end }}
+
+---
+{{ if or (not .Values.skipDeprecated) (has "9.6.7-v5" .Values.enableVersions.Postgres) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PostgresVersion
+metadata:
+  name: '9.6.7-v5'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres") $) }}:9.6.7-v6'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/postgres_exporter") $) }}:v0.4.7'
+  podSecurityPolicies:
+    databasePolicyName: postgres-db
+  stash:
+    addon:
+      backupTask:
+        name: postgres-backup-9.6.19-v4
+      restoreTask:
+        name: postgres-restore-9.6.19-v4
+  version: 9.6.7
+  deprecated: {{ not (has "9.6.7-v5" .Values.enableVersions.Postgres) }}
+{{ end }}
+{{ end }}

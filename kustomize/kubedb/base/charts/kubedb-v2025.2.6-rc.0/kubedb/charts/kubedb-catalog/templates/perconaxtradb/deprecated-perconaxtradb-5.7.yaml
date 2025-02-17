@@ -1,0 +1,59 @@
+{{ $featureGates := .Values.featureGates }}
+{{- if .Values.global }}
+  {{ $featureGates = mergeOverwrite dict .Values.featureGates .Values.global.featureGates }}
+{{- end }}
+
+{{ if $featureGates.PerconaXtraDB }}
+{{ if or (not .Values.skipDeprecated) (has "5.7" .Values.enableVersions.PerconaXtraDB) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PerconaXtraDBVersion
+metadata:
+  name: '5.7'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/percona") $) }}:5.7'
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mysqld-exporter") $) }}:v0.11.0'
+  initContainer:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/busybox") $) }}'
+  podSecurityPolicies:
+    databasePolicyName: percona-xtradb-db
+  stash:
+    addon:
+      backupTask:
+        name: perconaxtradb-backup-5.7
+      restoreTask:
+        name: perconaxtradb-restore-5.7
+  version: "5.7"
+  deprecated: {{ not (has "5.7" .Values.enableVersions.PerconaXtraDB) }}
+{{ end }}
+
+---
+{{ if or (not .Values.skipDeprecated) (has "5.7-cluster" .Values.enableVersions.PerconaXtraDB) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: PerconaXtraDBVersion
+metadata:
+  name: '5.7-cluster'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/percona-xtradb-cluster") $) }}:5.7'
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mysqld-exporter") $) }}:v0.11.0'
+  initContainer:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/busybox") $) }}'
+  podSecurityPolicies:
+    databasePolicyName: percona-xtradb-db
+  stash:
+    addon:
+      backupTask:
+        name: perconaxtradb-backup-5.7
+      restoreTask:
+        name: perconaxtradb-restore-5.7
+  version: "5.7"
+  deprecated: {{ not (has "5.7-cluster" .Values.enableVersions.PerconaXtraDB) }}
+{{ end }}
+{{ end }}

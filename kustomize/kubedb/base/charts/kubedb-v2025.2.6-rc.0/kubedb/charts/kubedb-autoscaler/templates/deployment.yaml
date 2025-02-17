@@ -1,0 +1,179 @@
+{{- $major := default "0" .Capabilities.KubeVersion.Major | trimSuffix "+" | int64 }}
+{{- $minor := default "0" .Capabilities.KubeVersion.Minor | trimSuffix "+" | int64 }}
+{{- $criticalAddon := and .Values.criticalAddon (or (eq .Release.Namespace "kube-system") (and (ge $major 1) (ge $minor 17))) -}}
+
+{{- $maxConcurrentReconciles := .Values.maxConcurrentReconciles }}
+{{- if .Values.global }}
+  {{ $maxConcurrentReconciles = default .Values.maxConcurrentReconciles .Values.global.maxConcurrentReconciles }}
+{{- end }}
+
+{{- $nodeSelector := .Values.nodeSelector }}
+{{- if .Values.global }}
+  {{ $nodeSelector = default .Values.nodeSelector .Values.global.nodeSelector }}
+{{- end }}
+
+{{- $tolerations := .Values.tolerations }}
+{{- if .Values.global }}
+  {{ $tolerations = default .Values.tolerations .Values.global.tolerations }}
+{{- end }}
+
+{{- $affinity := .Values.affinity }}
+{{- if .Values.global }}
+  {{ $affinity = default .Values.affinity .Values.global.affinity }}
+{{- end }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubedb-autoscaler.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kubedb-autoscaler.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kubedb-autoscaler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "kubedb-autoscaler.selectorLabels" . | nindent 8 }}
+      annotations:
+        reload: {{ randAlpha 8 }}
+      {{- if $criticalAddon }}
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- include "docker.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "kubedb-autoscaler.serviceAccountName" . }}
+      {{- if and .Values.global .Values.global.waitForWebhook }}
+      initContainers:
+      - name: wait
+        image: {{ include "waitfor.registry" . }}/{{ .Values.waitfor.repository }}:{{ .Values.waitfor.tag }}
+        imagePullPolicy: {{ .Values.imagePullPolicy  }}
+        command:
+        - /bin/sh
+        - -c
+        - kubectl wait --for=create -n {{ .Release.Namespace }} service -l 'app.kubernetes.io/name=kubedb-webhook-server' --timeout=5m &&
+          kubectl wait --for=condition=kubedb.com/conversion=true -n {{ .Release.Namespace }} pods -l 'app.kubernetes.io/instance={{ .Release.Name }},app.kubernetes.io/name=kubedb-webhook-server' --timeout=5m
+        securityContext:
+          {{- toYaml .Values.operator.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.operator.resources | nindent 10 }}
+      {{- end }}
+      containers:
+      - name: operator
+        securityContext:
+          {{- toYaml .Values.operator.securityContext | nindent 10 }}
+        image: {{ include "operator.registry" . }}/{{ .Values.operator.repository }}:{{ .Values.operator.tag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.imagePullPolicy  }}
+        args:
+        - operator
+        - --v={{ .Values.logLevel }}
+        - --use-kubeapiserver-fqdn-for-aks={{ .Values.apiserver.useKubeapiserverFqdnForAks }}
+        - --metrics-bind-address=:{{ .Values.monitoring.bindPort }}
+        - --health-probe-bind-address=:{{ .Values.apiserver.healthcheck.probePort }}
+        - --update-interval={{ .Values.updateInterval }}
+        - --prometheus-address={{.Values.storageAutoscaler.prometheus.address}}
+        {{- if .Values.storageAutoscaler.prometheus.caCert }}
+        - --prometheus-ca-file=/var/prometheus-data/ca.crt
+        {{- end }}
+        {{- if .Values.storageAutoscaler.prometheus.bearerToken }}
+        - --prometheus-token-file=/var/prometheus-data/token.txt
+        {{- end }}
+        - --memory-aggregation-interval={{ .Values.recommender.memoryAggregationInterval }}
+        - --memory-aggregation-interval-count={{ .Values.recommender.memoryAggregationIntervalCount }}
+        - --memory-histogram-decay-half-life={{ .Values.recommender.memoryHistogramDecayHalfLife }}
+        - --cpu-histogram-decay-half-life={{ .Values.recommender.cpuHistogramDecayHalfLife }}
+        {{- if include "appscode.licenseSecretName" . }}
+        - --license-file=/var/run/secrets/appscode/license/key.txt
+        {{- end }}
+        {{- with $maxConcurrentReconciles }}
+        - --max-concurrent-reconciles={{.}}
+        {{- end }}
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        ports:
+        - name: metrics
+          containerPort: {{ .Values.monitoring.bindPort }}
+        - name: probes
+          containerPort: {{ .Values.apiserver.healthcheck.probePort }}
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmpdir
+        {{- if or (ne .Values.storageAutoscaler.prometheus.bearerToken "") (ne .Values.storageAutoscaler.prometheus.caCert  "") }}
+        - mountPath: /var/prometheus-data
+          name: prometheus-data
+        {{- end }}
+        {{- if include "appscode.licenseSecretName" . }}
+        - mountPath: /var/run/secrets/appscode/license
+          name: license
+        {{- end }}
+      {{- if .Values.apiserver.healthcheck.enabled }}
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: probes
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: probes
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      {{- end }}
+        resources:
+          {{- toYaml .Values.operator.resources | nindent 10 }}
+      volumes:
+      - name: tmpdir
+        emptyDir: {}
+      {{- if or (ne .Values.storageAutoscaler.prometheus.bearerToken "") (ne .Values.storageAutoscaler.prometheus.caCert  "") }}
+      - name: prometheus-data
+        secret:
+          defaultMode: 420
+          secretName: {{ include "kubedb-autoscaler.fullname" . }}-prometheus-data
+      {{- end }}
+      {{- if include "appscode.licenseSecretName" . }}
+      - name: license
+        secret:
+          defaultMode: 420
+          secretName: {{ include "appscode.licenseSecretName" . }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+    {{- if or $tolerations $criticalAddon }}
+      tolerations:
+      {{- with $tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $criticalAddon }}
+        - key: CriticalAddonsOnly
+          operator: Exists
+      {{- end -}}
+    {{- end -}}
+    {{- with $affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with $nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if $criticalAddon }}
+      priorityClassName: system-cluster-critical
+    {{- end -}}
