@@ -21,7 +21,7 @@ function kustomizeIt {
 ```
 
 ```sh
-APP_HOME=combined kustomizeIt base
+# APP_HOME=combined kustomizeIt base
 
 APP_HOME=kubeops kustomizeIt base
 APP_HOME=stash kustomizeIt base
@@ -30,7 +30,7 @@ APP_HOME=kubedb kustomizeIt base
 ```
 
 ```sh
-APP_HOME=combined kustomizeIt base | kubectl apply -f -
+# APP_HOME=combined kustomizeIt base | kubectl apply -f -
 
 APP_HOME=kubeops kustomizeIt base | kubectl apply -f -
 APP_HOME=stash kustomizeIt base | kubectl apply -f -
