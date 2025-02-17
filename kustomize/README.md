@@ -1,5 +1,7 @@
 
-https://github.com/kubernetes-sigs/kustomize/blob/master/examples/chart.md
+- https://github.com/kubernetes-sigs/kustomize/blob/master/examples/chart.md
+
+- https://github.com/kubernetes-sigs/kustomize/issues/5566
 
 ```sh
 

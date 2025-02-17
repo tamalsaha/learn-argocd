@@ -31,13 +31,21 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
 spec:
   backoffLimit: 3
-  ttlSecondsAfterFinished: 300
+  {{- if ge (int .Values.ttlSecondsAfterFinished) 0 }}
+  ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
+  {{- end }}
+  manualSelector: true
+  selector:
+    matchLabels:
+      {{- include "kubedb-crd-manager.labels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      labels:
+        {{- include "kubedb-crd-manager.labels" . | nindent 8 }}
     spec:
       {{- include "docker.imagePullSecrets" . | nindent 6 }}
       securityContext:
