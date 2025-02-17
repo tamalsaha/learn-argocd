@@ -3,19 +3,31 @@
 
 - https://github.com/kubernetes-sigs/kustomize/issues/5566
 
+- https://github.com/kubernetes-sigs/kustomize/issues/1593
+
 ```sh
-
-DEMO_HOME=kubedb
-mkdir -p $DEMO_HOME/base $DEMO_HOME/dev $DEMO_HOME/prod
-
+APP_HOME=kubedb
+mkdir -p $APP_HOME/base $APP_HOME/dev $APP_HOME/prod
 ```
 
-```
+```sh
 function kustomizeIt {
   kustomize build \
     --enable-helm \
-    $DEMO_HOME/$1
+    $APP_HOME/$1
 }
 ```
 
-`kustomizeIt base`
+```sh
+APP_HOME=kubeops kustomizeIt base
+APP_HOME=stash kustomizeIt base
+APP_HOME=kubestash kustomizeIt base
+APP_HOME=kubedb kustomizeIt base
+```
+
+```sh
+APP_HOME=kubeops kustomizeIt base | kubectl apply -f -
+APP_HOME=stash kustomizeIt base | kubectl apply -f -
+APP_HOME=kubestash kustomizeIt base | kubectl apply -f -
+APP_HOME=kubedb kustomizeIt base | kubectl apply -f -
+```
