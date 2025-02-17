@@ -1,0 +1,129 @@
+{{- $major := default "0" .Capabilities.KubeVersion.Major | trimSuffix "+" | int64 }}
+{{- $minor := default "0" .Capabilities.KubeVersion.Minor | trimSuffix "+" | int64 }}
+{{- $criticalAddon := and .Values.criticalAddon (or (eq .Release.Namespace "kube-system") (and (ge $major 1) (ge $minor 17))) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubestash-operator.fullname" . }}-operator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kubestash-operator.labels" . | nindent 4 }}
+    component: operator
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kubestash-operator.selectorLabels" . | nindent 6 }}
+      component: operator
+  template:
+    metadata:
+      labels:
+        {{- include "kubestash-operator.selectorLabels" . | nindent 8 }}
+        component: operator
+      annotations:
+        checksum/apiregistration.yaml: {{ include (print $.Template.BasePath "/webhook-server/cert.yaml") . | sha256sum }}
+      {{- if $criticalAddon }}
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- include "appscode.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "kubestash-operator.serviceAccountName" . }}
+      containers:
+      - name: operator
+        image: "{{ include "operator.registry" . }}/{{ .Values.operator.repository }}:{{ .Values.operator.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        securityContext:
+          {{- toYaml .Values.operator.securityContext | nindent 10 }}
+        args:
+          - operator
+          - --config=/var/config/config.yaml
+        {{- if include "appscode.licenseSecretName" . }}
+          - --license-file=/var/run/secrets/appscode/license/key.txt
+        {{- end }}
+        {{- with .Values.envFrom }}
+        envFrom:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        env:
+        {{- with .Values.env }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      {{- if .Values.apiserver.healthcheck.enabled }}
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      {{- end }}
+        resources:
+          {{- toYaml .Values.operator.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmpdir
+        - name: kubestash-tmp-volume
+          mountPath: /kubestash-tmp
+        - name: config
+          mountPath: /var/config
+        {{- if include "appscode.licenseSecretName" . }}
+        - mountPath: /var/run/secrets/appscode/license
+          name: license
+        {{- end }}
+      volumes:
+      - name: tmpdir
+        emptyDir: {}
+      - name: kubestash-tmp-volume
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: {{ include "kubestash-operator.fullname" . }}-config
+      {{- if include "appscode.licenseSecretName" . }}
+      - name: license
+        secret:
+          defaultMode: 420
+          secretName: {{ include "appscode.licenseSecretName" . }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+    {{- if or .Values.tolerations $criticalAddon }}
+      tolerations:
+      {{- with .Values.tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $criticalAddon }}
+        - key: CriticalAddonsOnly
+          operator: Exists
+      {{- end -}}
+    {{- end -}}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if $criticalAddon }}
+      priorityClassName: system-cluster-critical
+    {{- end -}}

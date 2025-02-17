@@ -1,0 +1,17 @@
+{{ if .Values.manifest.enabled }}
+apiVersion: addons.kubestash.com/v1alpha1
+kind: Function
+metadata:
+  name: 'manifest-backup'
+  labels:
+    {{- include "kubestash-catalog.labels" . | nindent 4 }}
+spec:
+  args:
+  - backup
+  - --namespace=${namespace:=default}
+  - --backupsession=${backupSession:=}
+  - --enable-cache=${enableCache:=}
+  - --scratch-dir=${scratchDir:=}
+  image: '{{ include "image.ghcr" (merge (dict "_repo" "kubestash/manifest") $) }}:v0.8.0'
+{{ end }}
+

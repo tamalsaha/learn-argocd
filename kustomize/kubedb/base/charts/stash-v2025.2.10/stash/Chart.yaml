@@ -1,0 +1,34 @@
+apiVersion: v2
+appVersion: v2025.2.10
+dependencies:
+- condition: features.community
+  name: stash-community
+  repository: file://../stash-community
+  version: v0.39.0
+- condition: features.enterprise
+  name: stash-enterprise
+  repository: file://../stash-enterprise
+  version: v0.39.0
+- condition: features.enterprise
+  name: stash-catalog
+  repository: file://../stash-catalog
+  version: v2025.2.10
+- condition: features.enterprise
+  name: stash-metrics
+  repository: file://../stash-metrics
+  version: v2025.2.10
+- condition: ace-user-roles.enabled
+  name: ace-user-roles
+  repository: oci://ghcr.io/appscode-charts
+  version: v2024.9.30
+description: Stash by AppsCode - Backup your Kubernetes native applications
+home: https://stash.run
+icon: https://cdn.appscode.com/images/products/stash/stash-icon.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: stash
+sources:
+- https://github.com/stashed
+type: application
+version: v2025.2.10

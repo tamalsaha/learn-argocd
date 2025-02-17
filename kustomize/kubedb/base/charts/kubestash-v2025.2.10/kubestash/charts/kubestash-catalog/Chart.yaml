@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: v2025.2.10
+description: KubeStash Catalog by AppsCode - Catalog of KubeStash Addons
+home: https://kubestash.com
+icon: https://cdn.appscode.com/images/products/stash/stash-community-icon.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: kubestash-catalog
+sources:
+- https://github.com/kuebstash
+type: application
+version: v2025.2.10

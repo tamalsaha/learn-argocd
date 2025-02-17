@@ -1,0 +1,18 @@
+project:
+  name: KubeStash Catalog
+  shortName: KubeStash Catalog
+  url: https://github.com/kubestash
+  description: Catalog of KubeStash Addons
+  app: KubeStash catalog
+repository:
+  url: https://charts.appscode.com/stable/
+  name: appscode
+chart:
+  name: kubestash-catalog
+  values: -- generate from values file --
+  valuesExample: -- generate from values file --
+prerequisites:
+- Kubernetes 1.14+
+release:
+  name: kubestash-catalog
+  namespace: kubestash

@@ -1,0 +1,17 @@
+{{- if or .Values.apiserver.enableMutatingWebhook .Values.apiserver.enableValidatingWebhook }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubestash-operator.webhookServiceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kubestash-operator.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "kubestash-operator.selectorLabels" . | nindent 4 }}
+    component: webhook-server
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 9443
+{{ end }}

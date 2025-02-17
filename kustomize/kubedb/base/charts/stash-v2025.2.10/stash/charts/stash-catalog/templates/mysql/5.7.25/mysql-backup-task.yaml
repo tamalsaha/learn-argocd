@@ -1,0 +1,18 @@
+{{ if .Values.mysql.enabled }}
+apiVersion: stash.appscode.com/v1beta1
+kind: Task
+metadata:
+  name: 'mysql-backup-5.7.25'
+  labels:
+    {{- include "stash-catalog.labels" . | nindent 4 }}
+spec:
+  steps:
+  - name: mysql-backup-5.7.25
+    params:
+    - name: outputDir
+      value: /stash-tmp/output
+  - name: update-status
+    params:
+    - name: outputDir
+      value: /stash-tmp/output
+{{ end }}

@@ -1,0 +1,107 @@
+apiVersion: metrics.appscode.com/v1alpha1
+kind: MetricsConfiguration
+metadata:
+  name: kubestash-appscode-com-restoresession
+spec:
+  targetRef:
+    apiVersion: core.kubestash.com/v1alpha1
+    kind: RestoreSession
+  commonLabels:
+  - key: invoker_kind
+    value: "RestoreSession"
+  - key: invoker_name
+    valuePath: .metadata.name
+  - key: target_kind
+    valuePath: .spec.target.kind
+  - key: target_name
+    valuePath: .spec.target.name
+  - key: target_namespace
+    valuePath: .spec.target.namespace
+  metrics:
+  - name: created
+    help: "Unix creation timestamp of this RestoreSession object"
+    type: gauge
+    field:
+      path: .metadata.creationTimestamp
+      type: DateTime
+    metricValue:
+      valueFromPath: .metadata.creationTimestamp
+  - name: info
+    help: "General information about this RestoreSession"
+    type: gauge
+    labels:
+    - key: datasource_namespace
+      valuePath: .spec.dataSource.namespace
+    - key: repository
+      valuePath: .spec.dataSource.repository
+    - key: snapshot
+      valuePath: .spec.dataSource.snapshot
+    - key: addon_name
+      valuePath: .spec.addon.name
+    - key: phase
+      valuePath: .status.phase
+    metricValue:
+      value: 1
+  - name: phase
+    help: "RestoreSession object current phase"
+    type: gauge
+    field:
+      path: .status.phase
+      type: String
+    params:
+    - key: phase
+      valuePath: .status.phase
+    states:
+      labelKey: phase
+      values:
+      - labelValue: Pending
+        metricValue:
+          valueFromExpression: "int(phase == 'Pending')"
+      - labelValue: Running
+        metricValue:
+          valueFromExpression: "int(phase == 'Running')"
+      - labelValue: Succeeded
+        metricValue:
+          valueFromExpression: "int(phase == 'Succeeded')"
+      - labelValue: Failed
+        metricValue:
+          valueFromExpression: "int(phase == 'Failed')"
+      - labelValue: Invalid
+        metricValue:
+          valueFromExpression: "int(phase == 'Invalid')"
+      - labelValue: Unknown
+        metricValue:
+          valueFromExpression: "int(phase == 'Unknown')"
+  - name: duration_seconds
+    help: "The total time taken to complete the restore process"
+    type: gauge
+    field:
+      path: .status.duration
+      type: String
+    params:
+    - key: duration
+      valuePath: .status.duration
+    metricValue:
+      valueFromExpression: toSecond(duration)
+  - name: component_count_total
+    help: "The number of total components for this RestoreSession"
+    type: gauge
+    field:
+      path: .status.totalComponents
+      type: Integer
+    metricValue:
+      valueFromPath: .status.totalComponents
+  - name: conditions
+    help: "Current conditions of this RestoreSession"
+    type: gauge
+    field:
+      path: .status.conditions
+      type: Array
+    labels:
+    - key: condition
+      valuePath: .status.conditions[*].type
+    - key: status
+      valuePath: .status.conditions[*].status
+    metricValue:
+      value: 1
+

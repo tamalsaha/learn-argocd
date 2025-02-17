@@ -1,0 +1,153 @@
+# Default values for stash-catalog.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Docker registry fqdn used to pull Stash related images.
+# Set this to use docker registry hosted at ${registryFQDN}/${registry}/${image}
+registryFQDN: ""
+image:
+  # Docker registry used to pull Postgres addon image
+  registry: ""
+# Number of seconds to wait for the database to be ready before backup/restore process.
+waitTimeout: 300
+elasticsearch:
+  # If true, deploys Elasticsearch addon
+  enabled: true
+  # optional argument to send multielasticdump
+  backup:
+    # Arguments to pass to `multielasticdump` command  during backup process
+    args: ""
+  restore:
+    # Arguments to pass to `multielasticdump` command during restore process
+    args: ""
+mariadb:
+  # If true, deploys MariaDB addon
+  enabled: true
+  # optional argument to send mariadbdump or mariadb command
+  backup:
+    # Arguments to pass to `mariadbdump` command  during bakcup process
+    args: "--all-databases --ignore-database=mysql"
+  restore:
+    # Arguments to pass to `mariadb` command during restore process
+    args: ""
+mongodb:
+  # If true, deploys MongoDB addon
+  enabled: true
+  # Maximum concurrency to perform backup or restore tasks
+  maxConcurrency: 3
+  # optional argument to send mongodump or mongorestore command
+  backup:
+    # Arguments to pass to `mongodump` command during backup process
+    args: ""
+  restore:
+    # Arguments to pass to `mongorestore` command during restore process
+    args: ""
+mysql:
+  # If true, deploys MySQL addon
+  enabled: true
+  # optional argument to send mysqldump or mysql command
+  backup:
+    # Arguments to pass to `mysqldump` command  during bakcup process
+    args: "--all-databases"
+  restore:
+    # Arguments to pass to `mysql` command during restore process
+    args: ""
+perconaxtradb:
+  # If true, deploys Percona XtraDB addon
+  enabled: true
+  backup:
+    # Arguments to pass to `mysqldump` command  during bakcup process
+    args: "--all-databases"
+    # Optional argument sent to backup script
+    socatRetry: 30
+  restore:
+    # Arguments to pass to `mysql` command during restore process
+    args: ""
+    # Optional argument sent to recovery script
+    targetAppReplicas: 1
+postgres:
+  # If true, deploys PostgreSQL addon
+  enabled: true
+  backup:
+    # Postgres dump command, can either be: pg_dumpall  or pg_dump
+    cmd: "pg_dumpall"
+    # Arguments to pass to `backup.cmd` command during backup process
+    args: ""
+  restore:
+    # Arguments to pass to `psql` command during restore process
+    args: ""
+redis:
+  # If true, deploys Redis addon
+  enabled: true
+  # optional argument to send redis-dump or redis command
+  backup:
+    # Arguments to pass to `redis-dump` command  during bakcup process
+    args: ""
+  restore:
+    # Arguments to pass to `redis` command during restore process
+    args: ""
+nats:
+  # If true, deploys NATS addon
+  enabled: true
+  # Optional argument to send to the backup or restore process
+  backup:
+    # Arguments to pass to `nats str backup` command during backup process
+    args: ""
+    # List of streams to backup. Don't set this field if you want to backup all streams.
+    streams: ""
+  restore:
+    # Arguments to pass to `nats str restore` command during restore process
+    args: ""
+    # List of streams to restore. Don't set this field if you want to restore all the backed up streams.
+    streams: ""
+    # Specify whether to delete the old stream before restoring from backup.
+    overwrite: false
+etcd:
+  # If true, deploys ETCD addon
+  enabled: true
+  # Optional argument to send to the backup or restore process
+  backup:
+    # Arguments to pass to `etcdctl save` command during backup process
+    args: ""
+  restore:
+    # Arguments to pass to `etcdctl restore` command during restore process
+    args: ""
+    # List of the peers used to bootstrap the ETCD cluster
+    initialCluster: ""
+    # Initial token used for the ETCD cluster
+    initialClusterToken: ""
+    # Directory where the ETCD stores its data for persistence
+    dataDir: ""
+    # Kind of the workload used to deploy the ETCD cluster (i.e. StatefulSet)
+    workloadKind: ""
+    # Name of the workload used to deploy the ETCD cluster
+    workloadName: ""
+kubedump:
+  # If true, deploy kubedump addon
+  enabled: true
+  # Optional arguments to pass to the backup process
+  backup:
+    # Specify whether to remove the decorator
+    sanitize: true
+    # Specify label selector to filter resources
+    labelSelector: ""
+    # Specify whether to include the dependants resources along with it's parent
+    includeDependants: false
+vault:
+  # If true, deploys vault addon
+  enabled: true
+  # Optional argument to send to the backup or restore process
+  backup:
+    # Arguments to pass to `vault operator raft snapshot save` command during backup process
+    args: ""
+    # Prefix that will be appended with the root-token & unseal-keys
+    keyPrefix: ""
+  restore:
+    # Arguments to pass to `vault operator raft snapshot restore` command during restore process
+    args: ""
+    # Specify whether to apply `-force` flag to restore vault snapshot
+    force: false
+    # Prefix that will be appended with the root-token & unseal-keys
+    keyPrefix: ""
+    # Prefix that was appended with the root-token & unseal-keys
+    oldKeyPrefix: ""

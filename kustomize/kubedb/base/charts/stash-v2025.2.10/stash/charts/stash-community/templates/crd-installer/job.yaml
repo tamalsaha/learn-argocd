@@ -1,0 +1,43 @@
+{{ if .Values.crdInstaller.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "stash-community.fullname" . }}-crd-installer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "stash-community.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-failed
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: 10
+  template:
+    spec:
+      {{- include "appscode.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "stash-community.serviceAccountName" . }}-crd-installer
+      containers:
+        - name: installer
+          image: "{{ .Values.crdInstaller.registry | default (include "operator.registry" .) }}/{{.Values.crdInstaller.repository}}:{{.Values.crdInstaller.tag | default .Values.operator.tag | default .Chart.AppVersion}}"
+          args:
+            - --enterprise=false
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          securityContext:
+            {{- toYaml .Values.crdInstaller.securityContext | nindent 12 }}
+      restartPolicy: Never
+    {{- if .Values.crdInstaller.tolerations }}
+      tolerations:
+      {{- with .Values.crdInstaller.tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end -}}
+    {{- with .Values.crdInstaller.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.crdInstaller.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+{{ end }}

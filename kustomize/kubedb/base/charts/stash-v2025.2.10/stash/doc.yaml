@@ -1,0 +1,18 @@
+project:
+  name: Stash by AppsCode
+  shortName: Stash
+  url: https://github.com/stashed/stash
+  description: Backup your Kubernetes native applications
+  app: a Stash operator
+repository:
+  url: https://charts.appscode.com/stable/
+  name: appscode
+chart:
+  name: stash
+  values: -- generate from values file --
+  valuesExample: global.registry=stashed
+prerequisites:
+- Kubernetes 1.14+
+release:
+  name: stash
+  namespace: stash
