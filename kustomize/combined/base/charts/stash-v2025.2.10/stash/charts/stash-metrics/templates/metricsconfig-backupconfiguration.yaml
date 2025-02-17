@@ -1,0 +1,53 @@
+apiVersion: metrics.appscode.com/v1alpha1
+kind: MetricsConfiguration
+metadata:
+  name: stash-appscode-com-backupconfiguration
+spec:
+  targetRef:
+    apiVersion: stash.appscode.com/v1beta1
+    kind: BackupConfiguration
+  commonLabels:
+    - key: invoker_kind
+      value: "BackupConfiguration"
+    - key: invoker_name
+      valuePath: .metadata.name
+  metrics:
+    - name: created
+      help: "Unix creation timestamp of this BackupConfiguration object"
+      type: gauge
+      field:
+        path: .metadata.creationTimestamp
+        type: DateTime
+      metricValue:
+        valueFromPath: .metadata.creationTimestamp
+    - name: info
+      help: "General information about this BackupConfiguration"
+      type: gauge
+      labels:
+        - key: driver
+          valuePath: .spec.driver
+        - key: repository
+          valuePath: .spec.repository.name
+        - key: schedule
+          valuePath: .spec.schedule
+        - key: target_api_version
+          valuePath: .spec.target.ref.apiVersion
+        - key: target_kind
+          valuePath: .spec.target.ref.kind
+        - key: target_name
+          valuePath: .spec.target.ref.name
+      metricValue:
+        value: 1
+    - name: conditions
+      help: "Current conditions of this BackupConfiguration"
+      type: gauge
+      field:
+        path: .status.conditions
+        type: Array
+      labels:
+        - key: condition
+          valuePath: .status.conditions[*].type
+        - key: status
+          valuePath: .status.conditions[*].status
+      metricValue:
+        value: 1

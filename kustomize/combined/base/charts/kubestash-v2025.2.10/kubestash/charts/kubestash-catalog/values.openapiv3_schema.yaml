@@ -1,0 +1,67 @@
+properties:
+  kubedump:
+    properties:
+      backup:
+        properties:
+          includeDependants:
+            type: boolean
+          labelSelector:
+            type: string
+          sanitize:
+            type: boolean
+        required:
+        - includeDependants
+        - labelSelector
+        - sanitize
+        type: object
+      enabled:
+        type: boolean
+    required:
+    - backup
+    - enabled
+    type: object
+  manifest:
+    properties:
+      enabled:
+        type: boolean
+    required:
+    - enabled
+    type: object
+  proxies:
+    properties:
+      ghcr:
+        description: ghcr.io
+        type: string
+    type: object
+  pvc:
+    properties:
+      enabled:
+        type: boolean
+    required:
+    - enabled
+    type: object
+  volumesnapshot:
+    properties:
+      enabled:
+        type: boolean
+    required:
+    - enabled
+    type: object
+  waitTimeout:
+    format: int64
+    type: integer
+  workload:
+    properties:
+      enabled:
+        type: boolean
+    required:
+    - enabled
+    type: object
+required:
+- kubedump
+- manifest
+- pvc
+- volumesnapshot
+- waitTimeout
+- workload
+type: object

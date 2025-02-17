@@ -1,0 +1,34 @@
+# Default values for kubestash-catalog.
+
+proxies:
+  ghcr: ghcr.io
+
+# proxies:
+#   ghcr: harbor.appscode.ninja/ghcr
+
+# Number of seconds to wait for the database to be ready before backup/restore process.
+waitTimeout: 300
+
+kubedump:
+  # If true, deploy kubedump addon
+  enabled: true
+  # Optional arguments to pass to the backup process
+  backup:
+    # Specify whether to remove the decorator
+    sanitize: true
+    # Specify label selector to filter resources
+    labelSelector: ""
+    # Specify whether to include the dependants resources along with it's parent
+    includeDependants: false
+pvc:
+  # If true, deploys PVC addon
+  enabled: true
+volumesnapshot:
+  # If true, deploys VolumeSnapshot addon
+  enabled: true
+workload:
+  # If true, deploys Workload addon
+  enabled: true
+manifest:
+  # If true, deploys Manifest addon
+  enabled: true

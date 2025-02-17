@@ -1,0 +1,45 @@
+{{ if .Values.kubedump.enabled }}
+apiVersion: addons.kubestash.com/v1alpha1
+kind: Addon
+metadata:
+  name: 'kubedump-addon'
+  labels:
+    {{- include "kubestash-catalog.labels" . | nindent 4 }}
+spec:
+  backupTasks:
+  - driver: Restic
+    executor: Job
+    function: kubedump-backup
+    name: manifest-backup
+    parameters:
+    - default: "true"
+      name: enableCache
+      required: false
+      usage: Enable or disable caching. Disabling caching may impact backup performance.
+    - default: /kubestash-tmp
+      name: scratchDir
+      required: false
+      usage: Directory for holding temporary files and restic cache.
+    - default: "true"
+      name: sanitize
+      required: false
+      usage: Specify whether to remove the decorators from the resource YAML.
+    - default: "false"
+      name: includeDependants
+      required: false
+      usage: Specify whether to backup the dependants object along with their parent.
+    - default: ""
+      name: labelSelector
+      required: false
+      usage: Specify a label selector to filter the resources.
+    singleton: true
+    volumeMounts:
+    - mountPath: /kubestash-tmp
+      name: kubestash-tmp-volume
+    volumeTemplate:
+    - name: kubestash-tmp-volume
+      source:
+        emptyDir: {}
+      usage: Holds temporary files and restic cache.
+{{ end }}
+

@@ -5,6 +5,8 @@
 
 - https://github.com/kubernetes-sigs/kustomize/issues/1593
 
+- https://www.cbui.dev/merging-helm-chart-values-with-kustomize/
+
 ```sh
 APP_HOME=kubedb
 mkdir -p $APP_HOME/base $APP_HOME/dev $APP_HOME/prod
@@ -19,6 +21,8 @@ function kustomizeIt {
 ```
 
 ```sh
+APP_HOME=combined kustomizeIt base
+
 APP_HOME=kubeops kustomizeIt base
 APP_HOME=stash kustomizeIt base
 APP_HOME=kubestash kustomizeIt base
@@ -26,6 +30,8 @@ APP_HOME=kubedb kustomizeIt base
 ```
 
 ```sh
+APP_HOME=combined kustomizeIt base | kubectl apply -f -
+
 APP_HOME=kubeops kustomizeIt base | kubectl apply -f -
 APP_HOME=stash kustomizeIt base | kubectl apply -f -
 APP_HOME=kubestash kustomizeIt base | kubectl apply -f -

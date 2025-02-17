@@ -1,0 +1,18 @@
+{{- if and .Values.global .Values.global.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "kubestash-operator.fullname" . }}-webhook-server-ingress
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "kubestash-operator.selectorLabels" . | nindent 6 }}
+      component: webhook-server
+  ingress:
+  # Scenarios considered:
+  # - Mutation & Validation
+  - {}
+  policyTypes:
+  - Ingress
+{{- end }}

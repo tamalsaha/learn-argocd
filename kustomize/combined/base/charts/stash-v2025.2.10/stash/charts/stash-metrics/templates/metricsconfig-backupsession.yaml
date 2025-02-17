@@ -1,0 +1,32 @@
+apiVersion: metrics.appscode.com/v1alpha1
+kind: MetricsConfiguration
+metadata:
+  name: stash-appscode-com-backupsession
+spec:
+  targetRef:
+    apiVersion: stash.appscode.com/v1beta1
+    kind: BackupSession
+  commonLabels:
+    - key: invoker_api_group
+      valuePath: .spec.invoker.apiGroup
+    - key: invoker_kind
+      valuePath: .spec.invoker.kind
+    - key: invoker_name
+      valuePath: .spec.invoker.name
+  metrics:
+    - name: created
+      help: "Unix creation timestamp of this BackupSession"
+      type: gauge
+      field:
+        path: .metadata.creationTimestamp
+        type: DateTime
+      metricValue:
+        valueFromPath: .metadata.creationTimestamp
+    - name: info
+      help: "General information about BackupSession"
+      type: gauge
+      labels:
+        - key: phase
+          valuePath: .status.phase
+      metricValue:
+        value: 1

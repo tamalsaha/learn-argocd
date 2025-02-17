@@ -1,0 +1,19 @@
+{{ if .Values.workload.enabled }}
+apiVersion: addons.kubestash.com/v1alpha1
+kind: Function
+metadata:
+  name: 'workload-backup'
+  labels:
+    {{- include "kubestash-catalog.labels" . | nindent 4 }}
+spec:
+  args:
+  - backup
+  - --namespace=${namespace:=default}
+  - --backupsession=${backupSession:=}
+  - --enable-cache=${enableCache:=}
+  - --scratch-dir=${scratchDir:=}
+  - --paths=${paths:=}
+  - --exclude=${exclude:=}
+  image: '{{ include "image.ghcr" (merge (dict "_repo" "kubestash/workload") $) }}:v0.15.0'
+{{ end }}
+

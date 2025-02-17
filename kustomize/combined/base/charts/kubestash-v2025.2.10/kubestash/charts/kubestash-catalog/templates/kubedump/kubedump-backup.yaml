@@ -1,0 +1,20 @@
+{{ if .Values.kubedump.enabled }}
+apiVersion: addons.kubestash.com/v1alpha1
+kind: Function
+metadata:
+  name: 'kubedump-backup'
+  labels:
+    {{- include "kubestash-catalog.labels" . | nindent 4 }}
+spec:
+  args:
+  - backup
+  - --namespace=${namespace:=default}
+  - --backupsession=${backupSession:=}
+  - --enable-cache=${enableCache:=}
+  - --scratch-dir=${scratchDir:=}
+  - --sanitize=${sanitize:=true}
+  - --label-selector=${labelSelector:=}
+  - --include-dependants=${includeDependants:=false}
+  image: '{{ include "image.ghcr" (merge (dict "_repo" "kubestash/kubedump") $) }}:v0.15.0'
+{{ end }}
+

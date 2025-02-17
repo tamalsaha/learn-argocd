@@ -1,0 +1,160 @@
+{{- $major := default "0" .Capabilities.KubeVersion.Major | trimSuffix "+" | int64 }}
+{{- $minor := default "0" .Capabilities.KubeVersion.Minor | trimSuffix "+" | int64 }}
+{{- $criticalAddon := and .Values.criticalAddon (or (eq .Release.Namespace "kube-system") (and (ge $major 1) (ge $minor 17))) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "stash-community.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "stash-community.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "stash-community.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "stash-community.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/apiregistration.yaml: {{ include (print $.Template.BasePath "/apiregistration.yaml") . | sha256sum }}
+      {{- if $criticalAddon }}
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- include "appscode.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "stash-community.serviceAccountName" . }}
+      containers:
+      - name: operator
+        securityContext:
+          {{- toYaml .Values.operator.securityContext | nindent 10 }}
+        image: {{ include "operator.registry" . }}/{{ .Values.operator.repository }}:{{ .Values.operator.tag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        args:
+        - run
+        - --v={{ .Values.logLevel }}
+        - --docker-registry={{ include "operator.registry" . }}
+        - --image={{ .Values.operator.repository }}
+        - --image-tag={{ .Values.operator.tag | default .Chart.AppVersion }}
+        {{- if .Values.imagePullSecrets }}
+        - --image-pull-secrets={{ include "image-pull-secrets" . }}
+        {{- end }}
+        - --secure-port=8443
+        - --audit-log-path=-
+        - --tls-cert-file=/var/serving-cert/tls.crt
+        - --tls-private-key-file=/var/serving-cert/tls.key
+        - --pushgateway-url={{ include "pushgateway-url" . }}
+        - --enable-mutating-webhook={{ .Values.apiserver.enableMutatingWebhook }}
+        - --enable-validating-webhook={{ .Values.apiserver.enableValidatingWebhook }}
+        - --bypass-validating-webhook-xray={{ .Values.apiserver.bypassValidatingWebhookXray }}
+        - --use-kubeapiserver-fqdn-for-aks={{ .Values.apiserver.useKubeapiserverFqdnForAks }}
+        {{- if .Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy" }}
+        - --cron-job-psp={{ .Values.security.podSecurityPolicies | join "," }}
+        - --backup-job-psp={{ .Values.security.podSecurityPolicies | join "," }}
+        - --restore-job-psp={{ .Values.security.podSecurityPolicies | join "," }}
+        {{- end }}
+        {{- if include "appscode.licenseSecretName" . }}
+        - --license-file=/var/run/secrets/appscode/license/key.txt
+        - --license-apiservice={{ .Values.licenseApiService }}
+        {{- end }}
+        ports:
+        - containerPort: 8443
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      {{- if .Values.apiserver.healthcheck.enabled }}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 5
+      {{- end }}
+        resources:
+          {{- toYaml .Values.operator.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /var/serving-cert
+          name: serving-cert
+        - mountPath: /tmp
+          name: stash-scratchdir
+        {{- if include "appscode.licenseSecretName" . }}
+        - mountPath: /var/run/secrets/appscode/license
+          name: license
+        {{- end }}
+      {{- if not .Values.pushgateway.customURL }}
+      - name: pushgateway
+        securityContext:
+          {{- toYaml .Values.pushgateway.securityContext | nindent 10 }}
+        image: '{{ .Values.pushgateway.registry }}/{{ .Values.pushgateway.repository }}:{{ .Values.pushgateway.tag }}'
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        args:
+        - --web.listen-address=:56789
+        - --persistence.file=/var/pv/pushgateway.dat
+        resources:
+          {{- toYaml .Values.pushgateway.resources | nindent 10 }}
+        ports:
+        - containerPort: 56789
+        volumeMounts:
+        - mountPath: /var/pv
+          name: data-volume
+        - mountPath: /tmp
+          name: stash-scratchdir
+      {{- end }}
+      volumes:
+      - emptyDir: {}
+        name: data-volume
+      - emptyDir: {}
+        name: stash-scratchdir
+      - name: serving-cert
+        secret:
+          defaultMode: 420
+          secretName: {{ include "stash-community.fullname" . }}-apiserver-cert
+      {{- if include "appscode.licenseSecretName" . }}
+      - name: license
+        secret:
+          defaultMode: 420
+          secretName: {{ include "appscode.licenseSecretName" . }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+    {{- if or .Values.tolerations $criticalAddon }}
+      tolerations:
+      {{- with .Values.tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $criticalAddon }}
+        - key: CriticalAddonsOnly
+          operator: Exists
+      {{- end -}}
+    {{- end -}}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if $criticalAddon }}
+      priorityClassName: system-cluster-critical
+    {{- end -}}

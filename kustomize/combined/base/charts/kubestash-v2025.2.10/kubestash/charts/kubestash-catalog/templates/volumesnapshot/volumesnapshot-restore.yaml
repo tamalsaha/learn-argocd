@@ -1,0 +1,18 @@
+{{ if .Values.volumesnapshot.enabled }}
+apiVersion: addons.kubestash.com/v1alpha1
+kind: Function
+metadata:
+  name: 'volumesnapshot-restore'
+  labels:
+    {{- include "kubestash-catalog.labels" . | nindent 4 }}
+spec:
+  args:
+  - restore
+  - --namespace=${namespace:=default}
+  - --restoresession=${restoreSession:=}
+  - --snapshot=${snapshot:=}
+  - --task-name=${taskName:=}
+  image: '{{ include "image.ghcr" (merge (dict "_repo" "kubestash/volume-snapshotter")
+    $) }}:v0.15.0'
+{{ end }}
+

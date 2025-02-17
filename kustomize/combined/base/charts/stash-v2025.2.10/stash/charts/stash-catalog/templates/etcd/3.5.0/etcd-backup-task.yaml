@@ -1,0 +1,18 @@
+{{ if .Values.etcd.enabled }}
+apiVersion: stash.appscode.com/v1beta1
+kind: Task
+metadata:
+  name: 'etcd-backup-3.5.0'
+  labels:
+    {{- include "stash-catalog.labels" . | nindent 4 }}
+spec:
+  steps:
+  - name: etcd-backup-3.5.0
+    params:
+    - name: outputDir
+      value: /stash-tmp/output
+  - name: update-status
+    params:
+    - name: outputDir
+      value: /stash-tmp/output
+{{ end }}

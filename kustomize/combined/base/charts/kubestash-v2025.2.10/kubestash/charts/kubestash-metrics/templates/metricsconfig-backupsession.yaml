@@ -1,0 +1,109 @@
+apiVersion: metrics.appscode.com/v1alpha1
+kind: MetricsConfiguration
+metadata:
+  name: kubestash-appscode-com-backupsession
+spec:
+  targetRef:
+    apiVersion: core.kubestash.com/v1alpha1
+    kind: BackupSession
+  commonLabels:
+  - key: invoker_kind
+    value: "BackupSession"
+  - key: invoker_name
+    valuePath: .metadata.name
+  - key: backup_invoker_kind
+    valuePath: .spec.invoker.kind
+  - key: backup_invoker_name
+    valuePath: .spec.invoker.name
+  metrics:
+  - name: created
+    help: "Unix creation timestamp of this BackupSession object"
+    type: gauge
+    field:
+      path: .metadata.creationTimestamp
+      type: DateTime
+    metricValue:
+      valueFromPath: .metadata.creationTimestamp
+  - name: info
+    help: "General information about this BackupSession"
+    type: gauge
+    labels:
+    - key: session
+      valuePath: .spec.session
+    - key: phase
+      valuePath: .status.phase
+    metricValue:
+      value: 1
+  - name: snapshots
+    help: "General information about the snapshots of this BackupSession"
+    type: gauge
+    field:
+      path: .status.snapshots
+      type: Array
+    labels:
+    - key: snapshot_name
+      valuePath: .status.snapshots[*].name
+    - key: snapshot_phase
+      valuePath: .status.snapshots[*].phase
+    - key: repository
+      valuePath: .status.snapshots[*].repository
+    - key: backedup_app_kind
+      valuePath: .status.snapshots[*].appRef.kind
+    - key: backedup_app_name
+      valuePath: .status.snapshots[*].appRef.name
+    - key: backedup_app_namespace
+      valuePath: .status.snapshots[*].appRef.namespace
+    metricValue:
+      value: 1
+  - name: phase
+    help: "BackupSession object current phase"
+    type: gauge
+    field:
+      path: .status.phase
+      type: String
+    params:
+    - key: phase
+      valuePath: .status.phase
+    states:
+      labelKey: phase
+      values:
+      - labelValue: Pending
+        metricValue:
+          valueFromExpression: "int(phase == 'Pending')"
+      - labelValue: Running
+        metricValue:
+          valueFromExpression: "int(phase == 'Running')"
+      - labelValue: Succeeded
+        metricValue:
+          valueFromExpression: "int(phase == 'Succeeded')"
+      - labelValue: Failed
+        metricValue:
+          valueFromExpression: "int(phase == 'Failed')"
+      - labelValue: Skipped
+        metricValue:
+          valueFromExpression: "int(phase == 'Skipped')"
+  - name: duration_seconds
+    help: "Time required to complete this backup process"
+    type: gauge
+    field:
+      path: .status.duration
+      type: String
+    params:
+    - key: duration
+      valuePath: .status.duration
+    metricValue:
+      valueFromExpression: toSecond(duration)
+  - name: conditions
+    help: "Current conditions of this BackupSession"
+    type: gauge
+    field:
+      path: .status.conditions
+      type: Array
+    labels:
+    - key: condition
+      valuePath: .status.conditions[*].type
+    - key: status
+      valuePath: .status.conditions[*].status
+    metricValue:
+      value: 1
+

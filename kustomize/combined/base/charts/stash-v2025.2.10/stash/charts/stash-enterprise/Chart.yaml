@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: v0.39.0
+description: Enterprise features for Stash by AppsCode
+home: https://stash.run
+icon: https://cdn.appscode.com/images/products/stash/stash-enterprise-icon.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: stash-enterprise
+sources:
+- https://github.com/stashed
+version: v0.39.0

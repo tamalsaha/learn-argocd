@@ -1,0 +1,74 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ns-kubedb.yaml
+- ns-kubeops.yaml
+- ns-stash.yaml
+
+helmCharts:
+- name: license-proxyserver
+  includeCRDs: true
+  valuesInline:
+    platform:
+      baseURL: https://appscode.com
+      token: 519cb5207fb908a0c78f0e7e1a0ece7374fd99a0
+  releaseName: license-proxyserver
+  namespace: kubeops
+  version: v2025.1.17
+  repo: oci://ghcr.io/appscode-charts
+
+- name: ace-user-roles
+  includeCRDs: true
+  valuesInline:
+    enableClusterRoles:
+      ace: false
+      appcatalog: true
+      catalog: false
+      cert-manager: false
+      kubedb: true
+      kubedb-ui: false
+      kubestash: true # enable if used
+      kubevault: false
+      license-proxyserver: true
+      metrics: true
+      prometheus: false
+      stash: true # enable if used
+  releaseName: ace-user-roles
+  namespace: kubeops
+  version: v2024.9.30
+  repo: oci://ghcr.io/appscode-charts
+
+- name: kubedb
+  includeCRDs: true
+  valuesInline:
+    ace-user-roles:
+      enabled: false
+  releaseName: kubedb
+  namespace: kubedb
+  version: v2025.2.6-rc.0
+  repo: oci://ghcr.io/appscode-charts
+
+# old stash
+- name: stash
+  includeCRDs: true
+  valuesInline:
+    ace-user-roles:
+      enabled: false
+    features:
+      enterprise: true
+  releaseName: stash
+  namespace: stash
+  version: v2025.2.10
+  repo: oci://ghcr.io/appscode-charts
+
+# new stash
+- name: kubestash
+  includeCRDs: true
+  valuesInline:
+    ace-user-roles:
+      enabled: false
+  releaseName: kubestash
+  namespace: stash
+  version: v2025.2.10
+  repo: oci://ghcr.io/appscode-charts

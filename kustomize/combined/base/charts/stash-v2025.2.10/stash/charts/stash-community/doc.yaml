@@ -1,0 +1,18 @@
+project:
+  name: Stash Community by AppsCode
+  shortName: Stash Community
+  url: https://github.com/stashed/stash
+  description: Free community features for Stash by AppsCode
+  app: a Stash community operator
+repository:
+  url: https://charts.appscode.com/stable/
+  name: appscode
+chart:
+  name: stash-community
+  values: -- generate from values file --
+  valuesExample: -- generate from values file --
+prerequisites:
+- Kubernetes 1.14+
+release:
+  name: stash-community
+  namespace: stash

@@ -1,0 +1,97 @@
+apiVersion: metrics.appscode.com/v1alpha1
+kind: MetricsConfiguration
+metadata:
+  name: kubestash-appscode-com-backupstorage
+spec:
+  targetRef:
+    apiVersion: storage.kubestash.com/v1alpha1
+    kind: BackupStorage
+  commonLabels:
+  - key: invoker_kind
+    value: "BackupStorage"
+  - key: invoker_name
+    valuePath: .metadata.name
+  metrics:
+  - name: created
+    help: "Unix creation timestamp of this BackupStorage object"
+    type: gauge
+    field:
+      path: .metadata.creationTimestamp
+      type: DateTime
+    metricValue:
+      valueFromPath: .metadata.creationTimestamp
+  - name: info
+    help: "General information about this BackupStorage"
+    type: gauge
+    labels:
+    - key: provider
+      valuePath: .spec.storage.provider
+    - key: default
+      valuePath: .spec.default
+    - key: deletionPolicy
+      valuePath: .spec.deletionPolicy
+    - key: phase
+      valuePath: .status.phase
+    metricValue:
+      value: 1
+  - name: repository_size_bytes
+    help: "Total backed up data in the repository of this BackupStorage"
+    type: gauge
+    field: 
+      path: .status.repositories
+      type: Array
+    params:
+    - key: size
+      valuePath: .status.repositories[*].size
+    labels:
+    - key: repo_name
+      valuePath: .status.repositories[*].name
+    - key: repo_namespace
+      valuePath: .status.repositories[*].namespace
+    - key: repo_path
+      valuePath: .status.repositories[*].path
+    metricValue:
+      valueFromExpression: "bytes(size)"
+  - name: phase
+    help: "BackupStorage object current phase"
+    type: gauge
+    field:
+      path: .status.phase
+      type: String
+    params:
+    - key: phase
+      valuePath: .status.phase
+    states:
+      labelKey: phase
+      values:
+      - labelValue: Ready
+        metricValue:
+          valueFromExpression: "int(phase == 'Ready')"
+      - labelValue: NotReady
+        metricValue:
+          valueFromExpression: "int(phase == 'NotReady')"
+  - name: size_bytes
+    help: "Total backed up data size in this BackupStorage"
+    type: gauge
+    field:
+      path: .status.totalSize
+      type: String
+    params:
+    - key: size
+      valuePath: .status.totalSize
+    metricValue:
+     valueFromExpression: "bytes(size)"
+  - name: conditions
+    help: "Current conditions of this BackupStorage"
+    type: gauge
+    field:
+      path: .status.conditions
+      type: Array
+    labels:
+    - key: condition
+      valuePath: .status.conditions[*].type
+    - key: status
+      valuePath: .status.conditions[*].status
+    metricValue:
+      value: 1
+
