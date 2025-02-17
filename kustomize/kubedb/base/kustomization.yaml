@@ -44,6 +44,8 @@ helmCharts:
   valuesInline:
     ace-user-roles:
       enabled: false
+    # kubedb-kubestash-catalog:
+    #   enabled: false
   releaseName: kubedb
   namespace: kubedb
   version: v2025.2.6-rc.0
@@ -72,3 +74,10 @@ helmCharts:
   namespace: stash
   version: v2025.2.10
   repo: oci://ghcr.io/appscode-charts
+
+# - name: kubedb-kubestash-catalog
+#   includeCRDs: false
+#   releaseName: kubedb-kubestash-catalog
+#   namespace: kubedb
+#   version: v2025.2.6-rc.0
+#   repo: oci://ghcr.io/appscode-charts
