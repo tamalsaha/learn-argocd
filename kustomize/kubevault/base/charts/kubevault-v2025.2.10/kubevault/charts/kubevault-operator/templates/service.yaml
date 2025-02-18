@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubevault-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kubevault-operator.labels" . | nindent 4 }}
+  {{- if eq "prometheus.io/builtin" ( include "monitoring.agent" . ) }}
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: {{ .Values.monitoring.bindPort | quote }}
+    prometheus.io/scheme: "http"
+  {{- end }}
+spec:
+  ports:
+  - name: metrics
+    port: {{ .Values.monitoring.bindPort }}
+    targetPort: metrics
+  selector:
+    {{- include "kubevault-operator.selectorLabels" . | nindent 4 }}

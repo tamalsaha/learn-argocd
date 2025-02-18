@@ -1,0 +1,12 @@
+apiVersion: v1
+appVersion: v0.20.0
+description: KubeVault Operator by AppsCode - HashiCorp Vault operator for Kubernetes
+home: https://kubevault.com
+icon: https://cdn.appscode.com/images/products/kubevault/icons/android-icon-192x192.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: kubevault-operator
+sources:
+- https://github.com/kubevault
+version: v0.20.0

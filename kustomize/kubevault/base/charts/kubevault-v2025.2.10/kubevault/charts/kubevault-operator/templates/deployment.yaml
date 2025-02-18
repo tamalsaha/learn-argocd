@@ -1,0 +1,125 @@
+{{- $major := default "0" .Capabilities.KubeVersion.Major | trimSuffix "+" | int64 }}
+{{- $minor := default "0" .Capabilities.KubeVersion.Minor | trimSuffix "+" | int64 }}
+{{- $criticalAddon := and .Values.criticalAddon (or (eq .Release.Namespace "kube-system") (and (ge $major 1) (ge $minor 17))) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubevault-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kubevault-operator.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kubevault-operator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "kubevault-operator.selectorLabels" . | nindent 8 }}
+      annotations:
+        reload: {{ randAlpha 8 }}
+      {{- if $criticalAddon }}
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- include "appscode.imagePullSecrets" . | nindent 6 }}
+      serviceAccountName: {{ include "kubevault-operator.serviceAccountName" . }}
+      containers:
+      - name: operator
+        securityContext:
+          {{- toYaml .Values.operator.securityContext | nindent 10 }}
+        image: {{ include "operator.registry" . }}/{{ .Values.operator.repository }}:{{ .Values.operator.tag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.imagePullPolicy  }}
+        args:
+        - operator
+        - --v={{ .Values.logLevel }}
+        - --use-kubeapiserver-fqdn-for-aks={{ .Values.apiserver.useKubeapiserverFqdnForAks }}
+        - --cluster-name={{ .Values.clusterName }}
+        - --metrics-bind-address=:{{ .Values.monitoring.bindPort }}
+        - --health-probe-bind-address=:{{ .Values.apiserver.healthcheck.probePort }}
+        {{- with .Values.recommendationEngine }}
+        - --recommendation-resync-period={{ .recommendationResyncPeriod }}
+        - --gen-rotate-tls-recommendation-before-expiry-year={{ .genRotateTLSRecommendationBeforeExpiryYear }}
+        - --gen-rotate-tls-recommendation-before-expiry-month={{ .genRotateTLSRecommendationBeforeExpiryMonth }}
+        - --gen-rotate-tls-recommendation-before-expiry-day={{ .genRotateTLSRecommendationBeforeExpiryDay }}
+        {{- end }}
+        {{- if include "appscode.licenseSecretName" . }}
+        - --license-file=/var/run/secrets/appscode/license/key.txt
+        {{- end }}
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        ports:
+        - name: metrics
+          containerPort: {{ .Values.monitoring.bindPort }}
+        - name: probes
+          containerPort: {{ .Values.apiserver.healthcheck.probePort }}
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmpdir
+        {{- if include "appscode.licenseSecretName" . }}
+        - mountPath: /var/run/secrets/appscode/license
+          name: license
+        {{- end }}
+      {{- if .Values.apiserver.healthcheck.enabled }}
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: probes
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: probes
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      {{- end }}
+        resources:
+          {{- toYaml .Values.operator.resources | nindent 10 }}
+      volumes:
+      - name: tmpdir
+        emptyDir: {}
+      {{- if include "appscode.licenseSecretName" . }}
+      - name: license
+        secret:
+          defaultMode: 420
+          secretName: {{ include "appscode.licenseSecretName" . }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+    {{- if or .Values.tolerations $criticalAddon }}
+      tolerations:
+      {{- with .Values.tolerations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $criticalAddon }}
+        - key: CriticalAddonsOnly
+          operator: Exists
+      {{- end -}}
+    {{- end -}}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if $criticalAddon }}
+      priorityClassName: system-cluster-critical
+    {{- end -}}

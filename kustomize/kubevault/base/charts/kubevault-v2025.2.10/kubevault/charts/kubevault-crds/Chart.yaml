@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: v2025.2.10
+description: KubeVault Custom Resource Definitions
+home: https://kubevault.com
+icon: https://cdn.appscode.com/images/products/kubevault/icons/android-icon-192x192.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: kubevault-crds
+sources:
+- https://github.com/kubevault
+type: application
+version: v2025.2.10

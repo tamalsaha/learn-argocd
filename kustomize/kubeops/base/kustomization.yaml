@@ -27,7 +27,7 @@ helmCharts:
       kubedb: true
       kubedb-ui: false
       kubestash: true # enable if used
-      kubevault: false
+      kubevault: true # enable if used
       license-proxyserver: true
       metrics: true
       prometheus: false

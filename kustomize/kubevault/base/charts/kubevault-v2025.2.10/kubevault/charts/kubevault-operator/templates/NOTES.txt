@@ -1,0 +1,13 @@
+To verify that Vault operator has started, run:
+
+  kubectl get deployments --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "kubevault-operator.name" . }},app.kubernetes.io/instance={{ .Release.Name }}"
+
+Now install/upgrade appscode/kubevault-catalog chart.
+
+To install, run:
+
+  helm install kubevault-catalog appscode/kubevault-catalog --namespace {{ .Release.Namespace }}
+
+To upgrade, run:
+
+  helm upgrade kubevault-catalog appscode/kubevault-catalog --namespace {{ .Release.Namespace }}

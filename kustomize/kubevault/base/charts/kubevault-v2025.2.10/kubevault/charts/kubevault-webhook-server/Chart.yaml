@@ -1,0 +1,12 @@
+apiVersion: v1
+appVersion: v0.20.0
+description: KubeVault Webhook Server by AppsCode
+home: https://kubevault.com
+icon: https://cdn.appscode.com/images/products/kubevault/kubevault-community-icon.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: kubevault-webhook-server
+sources:
+- https://github.com/kubevault
+version: v0.20.0
