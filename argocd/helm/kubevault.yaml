@@ -10,7 +10,7 @@ spec:
     repoURL: ghcr.io/appscode-charts
     targetRevision: v2025.2.10
     helm:
-      valuesObject:
+      values: |
         ace-user-roles:
           enabled: false
   destination:

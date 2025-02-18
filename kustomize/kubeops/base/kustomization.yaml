@@ -32,6 +32,9 @@ helmCharts:
       metrics: true
       prometheus: false
       stash: true # enable if used
+    annotations:
+      "helm.sh/hook": null
+      "helm.sh/hook-delete-policy": null
   releaseName: ace-user-roles
   namespace: kubeops
   version: v2024.9.30

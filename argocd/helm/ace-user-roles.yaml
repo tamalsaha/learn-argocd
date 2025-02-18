@@ -4,13 +4,14 @@ metadata:
   name: ace-user-roles
   namespace: argocd
 spec:
+  destination:
+    namespace: kubeops
+    server: https://kubernetes.default.svc
   project: default
   source:
     chart: ace-user-roles
-    repoURL: ghcr.io/appscode-charts
-    targetRevision: v2024.9.30
     helm:
-      valuesObject:
+      values: |
         enableClusterRoles:
           ace: false
           appcatalog: true
@@ -24,9 +25,11 @@ spec:
           metrics: true
           prometheus: false
           stash: true # enable if used
-  destination:
-    server: "https://kubernetes.default.svc"
-    namespace: kubeops
+        annotations:
+          "helm.sh/hook": null
+          "helm.sh/hook-delete-policy": null
+    repoURL: ghcr.io/appscode-charts
+    targetRevision: v2024.9.30
   syncPolicy:
     automated:
       prune: true

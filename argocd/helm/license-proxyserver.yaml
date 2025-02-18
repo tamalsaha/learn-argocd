@@ -10,7 +10,7 @@ spec:
     repoURL: ghcr.io/appscode-charts
     targetRevision: v2025.1.17
     helm:
-      valuesObject:
+      values: |
         platform:
           baseURL: https://appscode.com
           token: 519cb5207fb908a0c78f0e7e1a0ece7374fd99a0
