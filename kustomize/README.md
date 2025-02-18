@@ -39,3 +39,6 @@ APP_HOME=kubestash kustomizeIt base | kubectl apply -f -
 APP_HOME=kubedb kustomizeIt base | kubectl apply -f -
 APP_HOME=kubevault kustomizeIt base | kubectl apply -f -
 ```
+
+**Note**
+- Combined mode did not work.

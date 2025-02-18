@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ns-stash.yaml
+- ns-kubestash.yaml
 
 helmCharts:
 # new stash
@@ -12,6 +12,6 @@ helmCharts:
     ace-user-roles:
       enabled: false
   releaseName: kubestash
-  namespace: stash
+  namespace: kubestash
   version: v2025.2.10
   repo: oci://ghcr.io/appscode-charts
