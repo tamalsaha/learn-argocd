@@ -3,7 +3,6 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     config.kubernetes.io/local-config: "true"
-    kustomize.config.k8s.io/behavior: merge
   labels:
     app.kubernetes.io/name: kubestash
   name: functions.addons.kubestash.com
