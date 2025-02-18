@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubeops
+  name: kubevault
   namespace: argocd
 spec:
   destination:
-    namespace: kubeops
+    namespace: kubevault
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: kustomize/kubeops/base
+    path: kustomize/kubevault/base
     repoURL: https://github.com/tamalsaha/learn-argocd.git
     targetRevision: HEAD
   syncPolicy:

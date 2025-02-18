@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubeops
+  name: stash
   namespace: argocd
 spec:
   destination:
-    namespace: kubeops
+    namespace: stash
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: kustomize/kubeops/base
+    path: kustomize/stash/base
     repoURL: https://github.com/tamalsaha/learn-argocd.git
     targetRevision: HEAD
   syncPolicy:
