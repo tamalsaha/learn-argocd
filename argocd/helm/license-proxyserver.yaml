@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: license-proxyserver
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: license-proxyserver
+    repoURL: ghcr.io/appscode-charts
+    targetRevision: v2025.1.17
+    helm:
+      valuesObject:
+        platform:
+          baseURL: https://appscode.com
+          token: 519cb5207fb908a0c78f0e7e1a0ece7374fd99a0
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: kubeops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
