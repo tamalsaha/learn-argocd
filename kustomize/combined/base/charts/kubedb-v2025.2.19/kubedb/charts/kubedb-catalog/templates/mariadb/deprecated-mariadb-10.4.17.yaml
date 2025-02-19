@@ -1,0 +1,34 @@
+{{ $featureGates := .Values.featureGates }}
+{{- if .Values.global }}
+  {{ $featureGates = mergeOverwrite dict .Values.featureGates .Values.global.featureGates }}
+{{- end }}
+
+{{ if $featureGates.MariaDB }}
+{{ if or (not .Values.skipDeprecated) (has "10.4.17" .Values.enableVersions.MariaDB) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: MariaDBVersion
+metadata:
+  name: '10.4.17'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  coordinator:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mariadb-coordinator") $) }}:v0.32.0'
+  db:
+    image: '{{ include "image.dockerLibrary" (merge (dict "_repo" "mariadb") $) }}:10.4.17'
+  exporter:
+    image: '{{ include "image.dockerHub" (merge (dict "_repo" "prom/mysqld-exporter") $) }}:v0.13.0'
+  initContainer:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mariadb-init") $) }}:0.5.2'
+  podSecurityPolicies:
+    databasePolicyName: maria-db
+  stash:
+    addon:
+      backupTask:
+        name: mariadb-backup-10.5.8
+      restoreTask:
+        name: mariadb-restore-10.5.8
+  version: 10.4.17
+  deprecated: {{ not (has "10.4.17" .Values.enableVersions.MariaDB) }}
+{{ end }}
+{{ end }}

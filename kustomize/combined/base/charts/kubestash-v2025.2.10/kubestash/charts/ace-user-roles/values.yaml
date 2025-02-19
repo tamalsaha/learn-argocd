@@ -20,3 +20,7 @@ enableClusterRoles:
   metrics: true
   prometheus: true
   stash: true
+
+annotations:
+  "helm.sh/hook": pre-install,pre-upgrade
+  "helm.sh/hook-delete-policy": before-hook-creation

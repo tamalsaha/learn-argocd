@@ -8,7 +8,7 @@ spec:
   source:
     chart: kubedb
     repoURL: ghcr.io/appscode-charts
-    targetRevision: v2025.2.6-rc.0
+    targetRevision: v2025.2.19
     helm:
       values: |
         ace-user-roles:

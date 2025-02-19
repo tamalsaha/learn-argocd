@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: v0.7.0
+description: KubeDB CRD Manager by AppsCode
+home: https://kubedb.com
+icon: https://cdn.appscode.com/images/products/kubedb/kubedb-ops-manager-icon.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: kubedb-crd-manager
+sources:
+- https://github.com/kubedb
+version: v0.7.0

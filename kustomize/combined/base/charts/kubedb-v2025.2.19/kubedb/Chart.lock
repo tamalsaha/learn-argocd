@@ -1,0 +1,42 @@
+dependencies:
+- name: petset
+  repository: oci://ghcr.io/appscode-charts
+  version: v2024.9.30
+- name: sidekick
+  repository: oci://ghcr.io/appscode-charts
+  version: v2024.11.8
+- name: supervisor
+  repository: oci://ghcr.io/appscode-charts
+  version: v2024.11.8
+- name: kubedb-crd-manager
+  repository: file://../kubedb-crd-manager
+  version: v0.7.0
+- name: kubedb-provisioner
+  repository: file://../kubedb-provisioner
+  version: v0.52.0
+- name: kubedb-ops-manager
+  repository: file://../kubedb-ops-manager
+  version: v0.39.0
+- name: kubedb-autoscaler
+  repository: file://../kubedb-autoscaler
+  version: v0.37.0
+- name: kubedb-schema-manager
+  repository: file://../kubedb-schema-manager
+  version: v0.28.0
+- name: kubedb-webhook-server
+  repository: file://../kubedb-webhook-server
+  version: v0.28.0
+- name: kubedb-metrics
+  repository: file://../kubedb-metrics
+  version: v2025.2.19
+- name: kubedb-catalog
+  repository: file://../kubedb-catalog
+  version: v2025.2.19
+- name: kubedb-kubestash-catalog
+  repository: file://../kubedb-kubestash-catalog
+  version: v2025.2.19
+- name: ace-user-roles
+  repository: oci://ghcr.io/appscode-charts
+  version: v2024.9.30
+digest: sha256:09a9a09887c192bc48b52aed2e63ae5eb4d167091329bc368b2ea47bc56c12c5
+generated: "2025-02-19T00:24:36.259659874Z"

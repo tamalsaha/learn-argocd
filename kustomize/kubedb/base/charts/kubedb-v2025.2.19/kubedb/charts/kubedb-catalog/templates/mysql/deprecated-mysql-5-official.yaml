@@ -1,0 +1,69 @@
+{{ $featureGates := .Values.featureGates }}
+{{- if .Values.global }}
+  {{ $featureGates = mergeOverwrite dict .Values.featureGates .Values.global.featureGates }}
+{{- end }}
+
+{{ if $featureGates.MySQL }}
+{{ if or (not .Values.skipDeprecated) (has "5" .Values.enableVersions.MySQL) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: MySQLVersion
+metadata:
+  name: '5'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mysql") $) }}:5'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/operator") $) }}:0.8.0'
+  gitSyncer:
+    image: '{{ include "image.kubernetes" (merge (dict "_repo" "git-sync/git-sync") $) }}:v4.2.1'
+  initContainer:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/busybox") $) }}'
+  podSecurityPolicies:
+    databasePolicyName: mysql-db
+  replicationModeDetector:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/replication-mode-detector") $) }}:v0.39.0'
+  updateConstraints:
+    denylist:
+      groupReplication:
+      - < 5.7.35
+      standalone:
+      - < 5.7.35
+  version: "5"
+  deprecated: {{ not (has "5" .Values.enableVersions.MySQL) }}
+{{ end }}
+
+---
+{{ if or (not .Values.skipDeprecated) (has "5-v1" .Values.enableVersions.MySQL) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: MySQLVersion
+metadata:
+  name: '5-v1'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mysql") $) }}:5-v1'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mysqld-exporter") $) }}:v0.11.0'
+  gitSyncer:
+    image: '{{ include "image.kubernetes" (merge (dict "_repo" "git-sync/git-sync") $) }}:v4.2.1'
+  initContainer:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/busybox") $) }}'
+  podSecurityPolicies:
+    databasePolicyName: mysql-db
+  replicationModeDetector:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/replication-mode-detector") $) }}:v0.39.0'
+  updateConstraints:
+    denylist:
+      groupReplication:
+      - < 5.7.35
+      standalone:
+      - < 5.7.35
+  version: "5"
+  deprecated: {{ not (has "5-v1" .Values.enableVersions.MySQL) }}
+{{ end }}
+{{ end }}

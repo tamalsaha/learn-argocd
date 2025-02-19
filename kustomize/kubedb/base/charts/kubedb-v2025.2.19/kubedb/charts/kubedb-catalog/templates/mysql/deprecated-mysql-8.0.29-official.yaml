@@ -1,0 +1,45 @@
+{{ $featureGates := .Values.featureGates }}
+{{- if .Values.global }}
+  {{ $featureGates = mergeOverwrite dict .Values.featureGates .Values.global.featureGates }}
+{{- end }}
+
+{{ if $featureGates.MySQL }}
+{{ if or (not .Values.skipDeprecated) (has "8.0.29" .Values.enableVersions.MySQL) }}
+apiVersion: catalog.kubedb.com/v1alpha1
+kind: MySQLVersion
+metadata:
+  name: '8.0.29'
+  labels:
+    {{- include "kubedb-catalog.labels" . | nindent 4 }}
+spec:
+  coordinator:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mysql-coordinator") $) }}:v0.30.0'
+  db:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "appscode-images/mysql") $) }}:8.0.29-oracle'
+  distribution: Official
+  exporter:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mysqld-exporter") $) }}:v0.13.1'
+  gitSyncer:
+    image: '{{ include "image.kubernetes" (merge (dict "_repo" "git-sync/git-sync") $) }}:v4.2.1'
+  initContainer:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/mysql-init") $) }}:8.0.31-v3'
+  podSecurityPolicies:
+    databasePolicyName: mysql-db
+  replicationModeDetector:
+    image: '{{ include "image.ghcr" (merge (dict "_repo" "kubedb/replication-mode-detector") $) }}:v0.39.0'
+  stash:
+    addon:
+      backupTask:
+        name: mysql-backup-8.0.21
+      restoreTask:
+        name: mysql-restore-8.0.21
+  updateConstraints:
+    denylist:
+      groupReplication:
+      - < 8.0.29
+      standalone:
+      - < 8.0.29
+  version: 8.0.29
+  deprecated: {{ not (has "8.0.29" .Values.enableVersions.MySQL) }}
+{{ end }}
+{{ end }}

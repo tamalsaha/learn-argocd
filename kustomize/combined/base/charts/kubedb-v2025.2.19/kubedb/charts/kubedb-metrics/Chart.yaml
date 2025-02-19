@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: v2025.2.19
+description: KubeDB State Metrics
+home: https://kubedb.com
+icon: https://cdn.appscode.com/images/products/kubedb/kubedb-community-icon.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: kubedb-metrics
+sources:
+- https://github.com/kubedb
+type: application
+version: v2025.2.19

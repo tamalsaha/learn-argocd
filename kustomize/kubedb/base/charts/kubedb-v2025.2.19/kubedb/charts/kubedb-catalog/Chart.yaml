@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: v2025.2.19
+description: KubeDB Catalog by AppsCode - Catalog for database versions
+home: https://kubedb.com
+icon: https://cdn.appscode.com/images/icon/kubedb.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: kubedb-catalog
+sources:
+- https://github.com/kubedb
+version: v2025.2.19

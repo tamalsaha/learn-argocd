@@ -12,5 +12,5 @@ helmCharts:
       enabled: false
   releaseName: kubedb
   namespace: kubedb
-  version: v2025.2.6-rc.0
+  version: v2025.2.19
   repo: oci://ghcr.io/appscode-charts
