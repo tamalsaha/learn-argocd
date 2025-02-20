@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ns-monitoring.yaml
+
+helmCharts:
+- name: panopticon
+  includeCRDs: true
+  valuesInline:
+    monitoring:
+      agent: prometheus.io/operator
+      enabled: true
+      serviceMonitor:
+        labels:
+          release: kube-prometheus-stack
+  releaseName: panopticon
+  namespace: monitoring
+  version: v2024.11.8
+  repo: oci://ghcr.io/appscode-charts

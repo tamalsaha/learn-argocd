@@ -1,0 +1,38 @@
+{{- if eq "prometheus.io/operator" ( include "monitoring.agent" . ) }}
+
+{{- $labels := mergeOverwrite (dict) .Values.monitoring.serviceMonitor.labels }}
+{{- $_ := set $labels "app.kubernetes.io/name" (include "panopticon.name" .) }}
+{{- $_ := set $labels "app.kubernetes.io/instance" .Release.Name }}
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "panopticon.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- $labels | toYaml | nindent 4 }}
+spec:
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "panopticon.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: api
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    scheme: https
+    interval: 10s
+    honorLabels: true
+    tlsConfig:
+      ca:
+        secret:
+          name: {{ include "panopticon.fullname" . }}-apiserver-cert
+          key: ca.crt
+      serverName: "{{ include "panopticon.fullname" . }}.{{ .Release.Namespace }}.svc"
+  - port: telemetry
+    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    scheme: http
+    interval: 10s
+    honorLabels: true
+{{- end }}

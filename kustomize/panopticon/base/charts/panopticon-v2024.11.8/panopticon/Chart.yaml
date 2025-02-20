@@ -1,0 +1,17 @@
+apiVersion: v2
+appVersion: v0.0.17
+dependencies:
+- condition: ace-user-roles.enabled
+  name: ace-user-roles
+  repository: oci://ghcr.io/appscode-charts
+  version: v2024.9.30
+description: Kubernetes Panopticon by AppsCode
+home: https://github.com/kubeops/panopticon
+icon: https://cdn.appscode.com/images/products/searchlight/icons/android-icon-192x192.png
+maintainers:
+- email: support@appscode.com
+  name: appscode
+name: panopticon
+sources:
+- https://github.com/kubeops/panopticon
+version: v2024.11.8
