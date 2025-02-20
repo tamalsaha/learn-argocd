@@ -13,6 +13,18 @@ spec:
     repoURL: https://github.com/tamalsaha/learn-argocd.git
     targetRevision: HEAD
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+    automated: {}
+      # prune: true
+      # selfHeal: true
+
+  ignoreDifferences:
+  - jsonPointers:
+    - /data
+    kind: Secret
+    name: license-proxyserver-apiserver-cert
+    namespace: kubeops
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.proxyserver.licenses.appscode.com
+    jsonPointers:
+    - /spec/caBundle
