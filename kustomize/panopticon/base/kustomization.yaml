@@ -8,6 +8,8 @@ helmCharts:
 - name: panopticon
   includeCRDs: true
   valuesInline:
+    ace-user-roles:
+      enabled: false
     monitoring:
       agent: prometheus.io/operator
       enabled: true

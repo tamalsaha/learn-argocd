@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: panopticon
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: panopticon
+    repoURL: ghcr.io/appscode-charts
+    targetRevision: v2024.11.8
+    helm:
+      values: |
+        ace-user-roles:
+          enabled: false
+        monitoring:
+          agent: prometheus.io/operator
+          enabled: true
+          serviceMonitor:
+            labels:
+              release: kube-prometheus-stack
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: monitoring
+  syncPolicy:
+    automated: {}
+      # prune: true
+      # selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
