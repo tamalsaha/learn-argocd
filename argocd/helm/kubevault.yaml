@@ -22,3 +22,47 @@ spec:
       # selfHeal: true
     syncOptions:
     - CreateNamespace=true
+
+  ignoreDifferences:
+  - jsonPointers:
+    - /data
+    kind: Secret
+    name: kubevault-kubevault-webhook-server-apiserver-cert
+    namespace: kubevault
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.engine.kubevault.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.kubevault.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.policy.kubevault.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.engine.kubevault.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.kubevault.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apps
+    kind: Deployment
+    name: kubevault-kubevault-operator
+    namespace: kubevault
+    jsonPointers:
+    - /spec/template/metadata/annotations/reload
+  - group: apps
+    kind: Deployment
+    name: kubevault-kubevault-webhook-server
+    namespace: kubevault
+    jsonPointers:
+    - /spec/template/metadata/annotations/reload

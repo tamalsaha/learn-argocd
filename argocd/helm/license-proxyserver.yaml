@@ -23,3 +23,15 @@ spec:
       # selfHeal: true
     syncOptions:
     - CreateNamespace=true
+
+  ignoreDifferences:
+  - jsonPointers:
+    - /data
+    kind: Secret
+    name: license-proxyserver-apiserver-cert
+    namespace: kubeops
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.proxyserver.licenses.appscode.com
+    jsonPointers:
+    - /spec/caBundle

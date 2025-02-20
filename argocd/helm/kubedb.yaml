@@ -22,3 +22,139 @@ spec:
       # selfHeal: true
     syncOptions:
     - CreateNamespace=true
+
+  ignoreDifferences:
+  - jsonPointers:
+    - /data
+    kind: Secret
+    name: kubedb-kubedb-webhook-server-apiserver-cert
+    namespace: kubedb
+  - jsonPointers:
+    - /data
+    kind: Secret
+    name: kubedb-petset-webhook-cert
+    namespace: kubedb
+
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    name: kubedb-petset
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    name: mutators.kubedb.com
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    name: kubedb-petset
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    name: validators.kubedb.com
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.autoscaling.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.elasticsearch.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.kafka.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.ops.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.mutators.schema.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.autoscaling.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.elasticsearch.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.kafka.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.ops.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.postgres.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.schema.kubedb.com
+    jsonPointers:
+    - /spec/caBundle
+
+  - group: apps
+    kind: Deployment
+    name: kubedb-petset-webhook-server
+    namespace: kubedb
+    jsonPointers:
+    - /spec/template/metadata/annotations/reload
+  - group: apps
+    kind: Deployment
+    name: kubedb-kubedb-autoscaler
+    namespace: kubedb
+    jsonPointers:
+    - /spec/template/metadata/annotations/reload
+  - group: apps
+    kind: Deployment
+    name: kubedb-kubedb-ops-manager
+    namespace: kubedb
+    jsonPointers:
+    - /spec/template/metadata/annotations/reload
+  - group: apps
+    kind: Deployment
+    name: kubedb-kubedb-provisioner
+    namespace: kubedb
+    jsonPointers:
+    - /spec/template/metadata/annotations/reload
+  - group: apps
+    kind: Deployment
+    name: kubedb-kubedb-webhook-server
+    namespace: kubedb
+    jsonPointers:
+    - /spec/template/metadata/annotations/reload
+  - group: apps
+    kind: Deployment
+    name: kubedb-petset-webhook-server
+    namespace: kubedb
+    jsonPointers:
+    - /spec/template/metadata/annotations/checksum~1apiregistration.yaml
