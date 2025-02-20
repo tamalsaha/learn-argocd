@@ -28,3 +28,21 @@ spec:
       # selfHeal: true
     syncOptions:
     - CreateNamespace=true
+
+  ignoreDifferences:
+  - jsonPointers:
+    - /data
+    kind: Secret
+    name: panopticon-apiserver-cert
+    namespace: monitoring
+  - group: apiregistration.k8s.io
+    kind: APIService
+    name: v1alpha1.validators.metrics.appscode.com
+    jsonPointers:
+    - /spec/caBundle
+  - group: apps
+    kind: Deployment
+    name: panopticon
+    namespace: monitoring
+    jsonPointers:
+    - /spec/template/metadata/annotations/checksum~1apiregistration.yaml
