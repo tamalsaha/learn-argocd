@@ -29,6 +29,33 @@ spec:
     kind: Secret
     name: kubevault-kubevault-webhook-server-apiserver-cert
     namespace: kubevault
+
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    name: mutators.engine.kubevault.com
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    name: mutators.kubevault.com
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    name: mutators.policy.kubevault.com
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    name: validators.engine.kubevault.com
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    name: validators.kubevault.com
+    jqPathExpressions:
+    - .webhooks[].clientConfig.caBundle
+
   - group: apiregistration.k8s.io
     kind: APIService
     name: v1alpha1.mutators.engine.kubevault.com
