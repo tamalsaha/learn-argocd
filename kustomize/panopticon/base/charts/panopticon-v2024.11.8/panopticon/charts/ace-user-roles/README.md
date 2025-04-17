@@ -45,28 +45,30 @@ The command removes all the Kubernetes components associated with the chart and 
 
 The following table lists the configurable parameters of the `ace-user-roles` chart and their default values.
 
-|               Parameter                |         Description         |      Default      |
-|----------------------------------------|-----------------------------|-------------------|
-| nameOverride                           | Overrides name template     | <code>""</code>   |
-| fullnameOverride                       | Overrides fullname template | <code>""</code>   |
-| enableClusterRoles.ace                 |                             | <code>true</code> |
-| enableClusterRoles.appcatalog          |                             | <code>true</code> |
-| enableClusterRoles.catalog             |                             | <code>true</code> |
-| enableClusterRoles.cert-manager        |                             | <code>true</code> |
-| enableClusterRoles.kubedb              |                             | <code>true</code> |
-| enableClusterRoles.kubedb-ui           |                             | <code>true</code> |
-| enableClusterRoles.kubestash           |                             | <code>true</code> |
-| enableClusterRoles.kubevault           |                             | <code>true</code> |
-| enableClusterRoles.license-proxyserver |                             | <code>true</code> |
-| enableClusterRoles.metrics             |                             | <code>true</code> |
-| enableClusterRoles.prometheus          |                             | <code>true</code> |
-| enableClusterRoles.stash               |                             | <code>true</code> |
+|               Parameter                |         Description         |               Default                |
+|----------------------------------------|-----------------------------|--------------------------------------|
+| nameOverride                           | Overrides name template     | <code>""</code>                      |
+| fullnameOverride                       | Overrides fullname template | <code>""</code>                      |
+| enableClusterRoles.ace                 |                             | <code>true</code>                    |
+| enableClusterRoles.appcatalog          |                             | <code>true</code>                    |
+| enableClusterRoles.catalog             |                             | <code>true</code>                    |
+| enableClusterRoles.cert-manager        |                             | <code>true</code>                    |
+| enableClusterRoles.kubedb              |                             | <code>true</code>                    |
+| enableClusterRoles.kubedb-ui           |                             | <code>true</code>                    |
+| enableClusterRoles.kubestash           |                             | <code>true</code>                    |
+| enableClusterRoles.kubevault           |                             | <code>true</code>                    |
+| enableClusterRoles.license-proxyserver |                             | <code>true</code>                    |
+| enableClusterRoles.metrics             |                             | <code>true</code>                    |
+| enableClusterRoles.prometheus          |                             | <code>true</code>                    |
+| enableClusterRoles.stash               |                             | <code>true</code>                    |
+| annotations.helm.sh/hook               |                             | <code>pre-install,pre-upgrade</code> |
+| annotations.helm.sh/hook-delete-policy |                             | <code>before-hook-creation</code>    |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm upgrade -i`. For example:
 
 ```bash
-$ helm upgrade -i ace-user-roles appscode/ace-user-roles -n kubeops --create-namespace --version=v2024.9.30 --set -- generate from values file --
+$ helm upgrade -i ace-user-roles appscode/ace-user-roles -n kubeops --create-namespace --version=v2024.9.30 --set annotations.helm.sh/hook=pre-install,pre-upgrade
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while
